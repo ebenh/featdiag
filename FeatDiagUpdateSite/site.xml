@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/FeatDiag_1.0.0.jar" id="FeatDiag" version="1.0.0">
+      <category name="Feature Diagrams"/>
+   </feature>
+   <category-def name="Feature Diagrams" label="Feature Diagrams"/>
+</site>

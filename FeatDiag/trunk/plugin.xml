@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            name="Feature Diagram Editor"
+            extensions="feat"
+            icon="icons/featIcon.gif"
+            class="com.eclipse.featdiag.editors.DiagramEditor"
+            id="featdiag.editors.FeatureDiagramEditor">
+      </editor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            description="Catagory Description"
+            id="FeatDiag.menu.command.categoryTest"
+            name="Catagory Name">
+      </category>
+      <command
+            categoryId="FeatDiag.menu.command.categoryTest"
+            description="Open the feature diagram editor"
+            id="FeatDiag.menu.command.openEditorCommand"
+            name="Open Editor Command">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            id="FeatDiag.menus.popup.OpenNewEditor"
+            objectClass="org.eclipse.jdt.core.IJavaElement">
+         <menu
+               id="FeatDiag.openEditorMenu"
+               label="Feature Diagrams"
+               path="additions">
+         </menu>
+         <action
+               class="com.eclipse.featdiag.actions.OpenNewEditorAction"
+               enablesFor="1"
+               icon="icons/featIcon.gif"
+               id="FeatDiag.actions.OpenEditorAction"
+               label="Open Feature Diagram"
+               menubarPath="FeatDiag.openEditorMenu/Open"
+               tooltip="Opens a new Feature Diagram editor containing the selected file">
+         </action>
+      </objectContribution>
+   </extension>
+
+</plugin>

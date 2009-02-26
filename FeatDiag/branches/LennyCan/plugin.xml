@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            name="Feature Diagram Editor"
+            extensions="feat"
+            icon="icons/featIcon.gif"
+            class="com.eclipse.featdiag.editors.DiagramEditor"
+            id="featdiag.editors.FeatureDiagramEditor">
+      </editor></extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            description="Catagory Description"
+            id="FeatDiag.menu.command.categoryTest"
+            name="Catagory Name">
+      </category>
+      <command
+            categoryId="FeatDiag.menu.command.categoryTest"
+            description="Open the feature diagram editor"
+            id="FeatDiag.menu.command.openEditorCommand"
+            name="Open Editor Command">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            id="FeatDiag.menus.popup.OpenNewEditor"
+            objectClass="org.eclipse.jdt.core.IJavaElement">
+         <menu
+               id="FeatDiag.openEditorMenu"
+               label="Feature Diagrams"
+               path="additions">
+         </menu>
+         <action
+               class="com.eclipse.featdiag.actions.OpenNewEditorAction"
+               enablesFor="1"
+               icon="icons/featIcon.gif"
+               id="FeatDiag.actions.OpenEditorAction"
+               label="Open Feature Diagram"
+               menubarPath="FeatDiag.openEditorMenu/Open"
+               tooltip="Opens a new Feature Diagram editor containing the selected file">
+         </action>
+      </objectContribution>
+   </extension>
+   <extension point="org.eclipse.ui.popupMenus">
+   <viewerContribution targetID="featdiag.editors.FeatureDiagramEditor" id="id1">
+   	<action label="Encapsulate Field" id="encapfield" menubarPath="refactor/Open" class="com.eclipse.featdiag.refactor.EncapsulateField"></action>
+   	<action label="Push Down" id="pushdown" menubarPath="refactor/Open" class="com.eclipse.featdiag.refactor.PushDown"></action><action id="pullup" label="Pull Up" menubarPath="refactor/Open" class="com.eclipse.featdiag.refactor.PullUp"></action>
+
+   	<action label="150%" id="zoom150" menubarPath="zoom/Open" class="com.eclipse.featdiag.zoom.Zoom150"></action>
+   	<action label="125%" id="zoom125" menubarPath="zoom/Open" class="com.eclipse.featdiag.zoom.Zoom125"></action>
+   	<action label="100%" id="zoom100" menubarPath="zoom/Open" class="com.eclipse.featdiag.zoom.Zoom100"></action>
+   	<action label="75%" id="zoom75" menubarPath="zoom/Open" class="com.eclipse.featdiag.zoom.Zoom75"></action>
+   	<action label="50%" id="zoom50" menubarPath="zoom/Open" class="com.eclipse.featdiag.zoom.Zoom50"></action><action label="Fit Page" id="zoom0" menubarPath="zoom/Open" class="com.eclipse.featdiag.zoom.ZoomFitPage"></action>
+   	<menu label="Zoom" id="zoom" path="additions"></menu>
+   	<menu label="Refactor" id="refactor" path="additions"></menu>
+   	
+   	
+   	<action label="Extract Class" id="extractclass" menubarPath="refactor/Open" class="com.eclipse.featdiag.refactor.ExtractClass"></action>
+   	
+   	<action label="Extract Interface" id="extractinterface" menubarPath="refactor/Open" class="com.eclipse.featdiag.refactor.ExtractInterface"></action>
+   	
+   	<action label="Extract Superclass" id="extractsuperclass" menubarPath="refactor/Open" class="com.eclipse.featdiag.refactor.ExtractSuperclass"></action><action label="Inline" id="inline" menubarPath="refactor/Open" class="com.eclipse.featdiag.refactor.Inline"></action><action label="Change Method Signature" id="changemethodsignature" menubarPath="refactor/Open" class="com.eclipse.featdiag.refactor.ChangeMethodSignature"></action><action label="Move" id="move" menubarPath="refactor/Open" class="com.eclipse.featdiag.refactor.Move"></action><action label="Rename" id="rename" menubarPath="refactor/Open" class="com.eclipse.featdiag.refactor.Rename">
+   	</action>
+   	</viewerContribution></extension>
+
+</plugin>
