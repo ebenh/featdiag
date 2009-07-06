@@ -16,6 +16,7 @@ import com.eclipse.featdiag.models.DiagramModel;
 import com.eclipse.featdiag.models.FieldModel;
 import com.eclipse.featdiag.models.MethodModel;
 import com.eclipse.featdiag.utils.MemberDiff;
+import com.sun.org.apache.bcel.internal.Constants;
 import com.sun.org.apache.bcel.internal.classfile.ClassParser;
 import com.sun.org.apache.bcel.internal.classfile.Field;
 import com.sun.org.apache.bcel.internal.classfile.JavaClass;
@@ -370,21 +371,19 @@ public class Parser {
 //                || instruction instanceof PUTSTATIC;
 //    }
    
-    // note eben
     private static boolean isMethodInvocation(final Instruction instruction)
-    {   
-        return instruction instanceof INVOKESPECIAL
-            || instruction instanceof INVOKEVIRTUAL
-            || instruction instanceof INVOKESTATIC
-            || instruction instanceof INVOKEINTERFACE;
+    {	
+        return instruction.getOpcode() == Constants.INVOKESPECIAL
+			|| instruction.getOpcode() == Constants.INVOKEVIRTUAL
+			|| instruction.getOpcode() == Constants.INVOKESTATIC
+			|| instruction.getOpcode() == Constants.INVOKEINTERFACE;
     }
-   
-    // note eben
+    
     private static boolean isFieldAccess(final Instruction instruction)
-    {   
-        return instruction instanceof GETFIELD
-            || instruction instanceof PUTFIELD
-            || instruction instanceof GETSTATIC
-            || instruction instanceof PUTSTATIC;
+    {	
+        return instruction.getOpcode() == Constants.GETFIELD
+	        || instruction.getOpcode() == Constants.PUTFIELD
+	        || instruction.getOpcode() == Constants.GETSTATIC
+	        || instruction.getOpcode() == Constants.PUTSTATIC;
     }
 }

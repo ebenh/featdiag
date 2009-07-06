@@ -10,8 +10,22 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.search.IJavaSearchConstants;
+import org.eclipse.jdt.core.search.IJavaSearchScope;
+import org.eclipse.jdt.core.search.SearchEngine;
+import org.eclipse.jdt.core.search.SearchMatch;
+import org.eclipse.jdt.core.search.SearchParticipant;
+import org.eclipse.jdt.core.search.SearchPattern;
+import org.eclipse.jdt.core.search.SearchRequestor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -41,12 +55,14 @@ public class OpenNewEditorAction implements IActionDelegate {
 	 */
 	public void run(IAction action) {
 		try {
-			IJavaElement element = (IJavaElement) ((StructuredSelection) selection)
-					.getFirstElement();
+			IJavaElement element = (IJavaElement) ((StructuredSelection) selection).getFirstElement();
+			
 			IJavaProject javaProj = element.getJavaProject();
 			IProject proj = javaProj.getProject();
 			IPath path = element.getPath();
 			IFile featFile = createFile(path, javaProj.getProject());
+
+			walkProject2(javaProj); // note eben
 			
 			if (proj.getFullPath().isPrefixOf(path)) {
 				int i = path.matchingFirstSegments(proj.getFullPath());
@@ -65,6 +81,8 @@ public class OpenNewEditorAction implements IActionDelegate {
 				
 				if (classFile != null && !getDiagExists()) {
 					String classFilePath = classFile.getLocation().toString();
+					System.out.println(classFilePath);
+					System.out.println(javaFile.getFullPath().toString());
 					editor.addMembers(classFilePath, javaFile.getFullPath().toString());
 				}
 			}
@@ -121,5 +139,108 @@ public class OpenNewEditorAction implements IActionDelegate {
 			System.out.println(e.getMessage());
 		}
 		return retval;
+	}
+	
+//	protected void walkProject(IJavaProject javaProject){
+//		try {
+//			for(IPackageFragmentRoot root : javaProject.getPackageFragmentRoots()){
+//				if(root.getKind() == IPackageFragmentRoot.K_SOURCE)
+//				{	
+//					for(IJavaElement elem : root.getChildren())
+//					{
+//						if(elem.getElementType() == IJavaElement.PACKAGE_FRAGMENT)
+//						{
+//							IPackageFragment fragment = (IPackageFragment)elem;
+//							//System.out.println("Package fragment : " + fragment.getElementName());
+//							
+//							for(ICompilationUnit cu : fragment.getCompilationUnits())
+//							{
+//								//System.out.println("cu " + cu.getElementName() + " p: " + cu.getPath());
+//								IFile file = (IFile)cu.getCorrespondingResource();
+//								IFile classFile = FileUtils.getClassFile(file);
+//								assert(classFile != null);		
+//							} // end for
+//						} // end if
+//					} // end for
+//				} // end if
+//			}
+//		} catch (JavaModelException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} // end for	
+//	}
+	
+	protected void walkProject2(IJavaProject javaProject){
+		try {
+			for(IPackageFragmentRoot root : javaProject.getPackageFragmentRoots()){
+				if(root.getKind() == IPackageFragmentRoot.K_SOURCE)
+				{	
+					for(IJavaElement elem : root.getChildren())
+					{						
+						if(elem.getElementType() == IJavaElement.PACKAGE_FRAGMENT)
+						{
+							IPackageFragment fragment = (IPackageFragment)elem;
+														
+							for(IJavaElement elem2 : fragment.getChildren())
+							{
+								if(elem2.getElementType() == IJavaElement.COMPILATION_UNIT)
+								{
+									ICompilationUnit compilationUnit = (ICompilationUnit)elem2;
+									
+									for(IJavaElement elem3 : compilationUnit.getChildren()){
+										
+										if(elem3.getElementType() == IJavaElement.TYPE)
+										{
+											IType type = (IType)elem3;
+											
+											for(IJavaElement elem4 : type.getChildren()){
+												
+												if(elem4.getElementType() == IJavaElement.METHOD){
+													IMethod method = (IMethod)elem4;
+													System.out.println("--> " + method.toString());
+
+												}
+												else if(elem4.getElementType() == IJavaElement.FIELD){
+													IField field = (IField)elem4;
+													System.out.println("--> " + field.toString());	
+												}		
+												
+												findReferences(elem4);
+											}
+										}										
+									}
+								}
+							}
+						} // end if
+					} // end for
+				} // end if
+			}
+		} catch (JavaModelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} // end for	
+	}
+	
+	void findReferences(IJavaElement javaElement){
+		assert javaElement instanceof IField;
+		assert javaElement instanceof IMethod;
+		
+		SearchPattern searchPattern = SearchPattern.createPattern(javaElement, IJavaSearchConstants.REFERENCES);
+		IJavaSearchScope searchScope = SearchEngine.createWorkspaceScope();
+		SearchEngine searchEngine = new SearchEngine();
+		SearchRequestor searchRequestor = new SearchRequestor() {
+			public void acceptSearchMatch(SearchMatch match) {
+				System.out.println("----> "	+ (IMethod)match.getElement());
+			}
+		};
+		
+		try {
+			searchEngine.search(searchPattern, new SearchParticipant[]{SearchEngine.getDefaultSearchParticipant()}, searchScope, searchRequestor, null);
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		System.out.println();
 	}
 }

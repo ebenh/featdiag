@@ -19,3 +19,4 @@ Eclipse-LazyStart: true
 Bundle-Vendor: Nicole Allard, Department of Computer Science, University of Toronto
 Bundle-ClassPath: .,
  icons
+Import-Package: junit.framework
