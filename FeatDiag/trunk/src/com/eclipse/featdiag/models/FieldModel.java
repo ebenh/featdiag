@@ -1,7 +1,12 @@
 package com.eclipse.featdiag.models;
 
+import java.security.InvalidParameterException;
+
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.gef.EditPart;
+import org.eclipse.jdt.core.Flags;
+import org.eclipse.jdt.core.IField;
+import org.eclipse.jdt.core.JavaModelException;
 
 import com.eclipse.featdiag.commands.FieldAddCommand;
 import com.eclipse.featdiag.commands.MemberAddCommand;
@@ -30,10 +35,32 @@ public class FieldModel extends MemberModel {
 	 * @param name
 	 * @param modifiers
 	 * @param fieldType
+	 * @throws JavaModelException 
+	 * @throws InvalidParameterException 
 	 */
 	public FieldModel(String name, int modifiers, String fieldType) {
 		super(name, modifiers);
 		this.fieldType = fieldType;
+	}
+	
+	public FieldModel(IField field) throws InvalidParameterException, JavaModelException {
+		super(field.getElementName(), getModifiers(field.getFlags()));
+		this.fieldType = field.getTypeSignature();
+	}
+	
+	private static int getModifiers(int flags){
+		int ret = 0;
+		
+		if((flags & Flags.AccPublic) == Flags.AccPublic){
+			ret |= 1;
+		}
+		else if((flags & Flags.AccPublic) == Flags.AccPrivate){
+			ret |= 2;
+		}
+		else if((flags & Flags.AccPublic) == Flags.AccProtected){
+			ret |= 4;
+		}
+		return ret;
 	}
 	
 	/**

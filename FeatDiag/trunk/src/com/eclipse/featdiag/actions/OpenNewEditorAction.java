@@ -46,58 +46,104 @@ import com.eclipse.featdiag.utils.FileUtils;
  *
  */
 public class OpenNewEditorAction implements IActionDelegate {
-	boolean diagExists = false;
+//	boolean diagExists = false;
 	ISelection selection;
 
 	/**
 	 * Called when option to open new feature diagram is selected
 	 * from the context menu.
 	 */
+//	public void run(IAction action) {
+//		try {
+//			IJavaElement element = (IJavaElement) ((StructuredSelection) selection).getFirstElement();
+//			
+//			//note eben
+//			if ((element.getElementType() == IJavaElement.TYPE) && ((IType)element).isClass())
+//			{
+//				IType classType = (IType)element;
+//				IJavaProject javaProj = classType.getJavaProject();
+//				
+//				
+//			}
+//			//end eben
+//			
+//			IJavaProject javaProj = element.getJavaProject();
+//			IProject proj = javaProj.getProject();
+//			IPath path = element.getPath();
+//			IFile featFile = createFile(path, javaProj.getProject());
+//
+//			walkProject2(javaProj); // note eben
+//			
+//			if (proj.getFullPath().isPrefixOf(path)) {
+//				int i = path.matchingFirstSegments(proj.getFullPath());
+//				path = path.removeFirstSegments(i);
+//			}
+//			IFile javaFile = proj.getFile(path);
+//			IFile classFile = FileUtils.getClassFile(javaFile);
+//
+//			if (featFile != null) {
+//				FileEditorInput input = new FileEditorInput(featFile);
+//				IWorkbenchWindow window = PlatformUI.getWorkbench()
+//						.getActiveWorkbenchWindow();
+//				DiagramEditor editor = (DiagramEditor) window.getActivePage()
+//						.openEditor(input,
+//								"featdiag.editors.FeatureDiagramEditor");
+//				
+//				if (classFile != null && !getDiagExists()) {
+//					String classFilePath = classFile.getLocation().toString();
+//					System.out.println(classFilePath);
+//					System.out.println(javaFile.getFullPath().toString());
+//					editor.addMembers(classFilePath, javaFile.getFullPath().toString());
+//				}
+//			}
+//		} catch (PartInitException e) {
+//		} catch (JavaModelException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//	}
+	
 	public void run(IAction action) {
 		try {
 			IJavaElement element = (IJavaElement) ((StructuredSelection) selection).getFirstElement();
 			
-			IJavaProject javaProj = element.getJavaProject();
-			IProject proj = javaProj.getProject();
-			IPath path = element.getPath();
-			IFile featFile = createFile(path, javaProj.getProject());
-
-			walkProject2(javaProj); // note eben
-			
-			if (proj.getFullPath().isPrefixOf(path)) {
-				int i = path.matchingFirstSegments(proj.getFullPath());
-				path = path.removeFirstSegments(i);
-			}
-			IFile javaFile = proj.getFile(path);
-			IFile classFile = FileUtils.getClassFile(javaFile);
-
-			if (featFile != null) {
-				FileEditorInput input = new FileEditorInput(featFile);
-				IWorkbenchWindow window = PlatformUI.getWorkbench()
-						.getActiveWorkbenchWindow();
-				DiagramEditor editor = (DiagramEditor) window.getActivePage()
-						.openEditor(input,
-								"featdiag.editors.FeatureDiagramEditor");
+			//note eben
+			if ((element.getElementType() == IJavaElement.TYPE) && ((IType)element).isClass())
+			{
+				IType classType = (IType)element;
+				IJavaProject javaProject = classType.getJavaProject();
 				
-				if (classFile != null && !getDiagExists()) {
-					String classFilePath = classFile.getLocation().toString();
-					System.out.println(classFilePath);
-					System.out.println(javaFile.getFullPath().toString());
-					editor.addMembers(classFilePath, javaFile.getFullPath().toString());
+				
+				ICompilationUnit compilationUnit = classType.getCompilationUnit();
+				IPath path = compilationUnit.getPath();
+				
+				IFile featFile = createFile(path, javaProject.getProject());
+				
+				if(featFile != null){
+					FileEditorInput fileEditorInput = new FileEditorInput(featFile);
+					IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+					DiagramEditor editor = (DiagramEditor) window.getActivePage().openEditor(fileEditorInput, "featdiag.editors.FeatureDiagramEditor");
+					
+					editor.addMembers(classType);
 				}
 			}
+		} 
+		catch (JavaModelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} catch (PartInitException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
-	
 	/**
 	 * Returns whether or not the feature diagram associated
 	 * with the selected class already exists.
 	 * @return
 	 */
-	private boolean getDiagExists() {
-		return diagExists;
-	}
+//	private boolean getDiagExists() {
+//		return diagExists;
+//	}
 
 	/**
 	 * Selected class changed.
@@ -127,7 +173,7 @@ public class OpenNewEditorAction implements IActionDelegate {
 			IPath filePath = proj.getLocation().append(path);
 			File file = filePath.toFile();
 			
-			diagExists = (file == null || file.exists());
+//			diagExists = (file == null || file.exists());
 			file.createNewFile();
 
 			// Notify the workspace that the file has changed
@@ -139,108 +185,5 @@ public class OpenNewEditorAction implements IActionDelegate {
 			System.out.println(e.getMessage());
 		}
 		return retval;
-	}
-	
-//	protected void walkProject(IJavaProject javaProject){
-//		try {
-//			for(IPackageFragmentRoot root : javaProject.getPackageFragmentRoots()){
-//				if(root.getKind() == IPackageFragmentRoot.K_SOURCE)
-//				{	
-//					for(IJavaElement elem : root.getChildren())
-//					{
-//						if(elem.getElementType() == IJavaElement.PACKAGE_FRAGMENT)
-//						{
-//							IPackageFragment fragment = (IPackageFragment)elem;
-//							//System.out.println("Package fragment : " + fragment.getElementName());
-//							
-//							for(ICompilationUnit cu : fragment.getCompilationUnits())
-//							{
-//								//System.out.println("cu " + cu.getElementName() + " p: " + cu.getPath());
-//								IFile file = (IFile)cu.getCorrespondingResource();
-//								IFile classFile = FileUtils.getClassFile(file);
-//								assert(classFile != null);		
-//							} // end for
-//						} // end if
-//					} // end for
-//				} // end if
-//			}
-//		} catch (JavaModelException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} // end for	
-//	}
-	
-	protected void walkProject2(IJavaProject javaProject){
-		try {
-			for(IPackageFragmentRoot root : javaProject.getPackageFragmentRoots()){
-				if(root.getKind() == IPackageFragmentRoot.K_SOURCE)
-				{	
-					for(IJavaElement elem : root.getChildren())
-					{						
-						if(elem.getElementType() == IJavaElement.PACKAGE_FRAGMENT)
-						{
-							IPackageFragment fragment = (IPackageFragment)elem;
-														
-							for(IJavaElement elem2 : fragment.getChildren())
-							{
-								if(elem2.getElementType() == IJavaElement.COMPILATION_UNIT)
-								{
-									ICompilationUnit compilationUnit = (ICompilationUnit)elem2;
-									
-									for(IJavaElement elem3 : compilationUnit.getChildren()){
-										
-										if(elem3.getElementType() == IJavaElement.TYPE)
-										{
-											IType type = (IType)elem3;
-											
-											for(IJavaElement elem4 : type.getChildren()){
-												
-												if(elem4.getElementType() == IJavaElement.METHOD){
-													IMethod method = (IMethod)elem4;
-													System.out.println("--> " + method.toString());
-
-												}
-												else if(elem4.getElementType() == IJavaElement.FIELD){
-													IField field = (IField)elem4;
-													System.out.println("--> " + field.toString());	
-												}		
-												
-												findReferences(elem4);
-											}
-										}										
-									}
-								}
-							}
-						} // end if
-					} // end for
-				} // end if
-			}
-		} catch (JavaModelException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} // end for	
-	}
-	
-	void findReferences(IJavaElement javaElement){
-		assert javaElement instanceof IField;
-		assert javaElement instanceof IMethod;
-		
-		SearchPattern searchPattern = SearchPattern.createPattern(javaElement, IJavaSearchConstants.REFERENCES);
-		IJavaSearchScope searchScope = SearchEngine.createWorkspaceScope();
-		SearchEngine searchEngine = new SearchEngine();
-		SearchRequestor searchRequestor = new SearchRequestor() {
-			public void acceptSearchMatch(SearchMatch match) {
-				System.out.println("----> "	+ (IMethod)match.getElement());
-			}
-		};
-		
-		try {
-			searchEngine.search(searchPattern, new SearchParticipant[]{SearchEngine.getDefaultSearchParticipant()}, searchScope, searchRequestor, null);
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		System.out.println();
-	}
+	}	
 }

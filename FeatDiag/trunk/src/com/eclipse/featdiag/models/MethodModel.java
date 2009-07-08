@@ -4,6 +4,9 @@ import java.security.InvalidParameterException;
 
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.gef.EditPart;
+import org.eclipse.jdt.core.Flags;
+import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jdt.core.JavaModelException;
 
 import com.eclipse.featdiag.commands.MemberAddCommand;
 import com.eclipse.featdiag.commands.MethodAddCommand;
@@ -27,9 +30,29 @@ public class MethodModel extends MemberModel {
 	 * @param name
 	 * @param modifiers
 	 * @param fieldType
+     * @throws JavaModelException 
 	 */
 	public MethodModel(String name, int modifiers) throws InvalidParameterException {
 		super(name, modifiers);
+	}
+    
+	public MethodModel(IMethod method) throws InvalidParameterException, JavaModelException {
+		super(method.getElementName(), getModifiers(method.getFlags()));
+	}
+	
+	private static int getModifiers(int flags){
+		int ret = 0;
+		
+		if((flags & Flags.AccPublic) == Flags.AccPublic){
+			ret |= 1;
+		}
+		else if((flags & Flags.AccPublic) == Flags.AccPrivate){
+			ret |= 2;
+		}
+		else if((flags & Flags.AccPublic) == Flags.AccProtected){
+			ret |= 4;
+		}
+		return ret;
 	}
 	
 	/**
