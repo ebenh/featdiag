@@ -27,6 +27,8 @@ import org.eclipse.gef.editparts.ZoomManager;
 import org.eclipse.gef.palette.PaletteRoot;
 import org.eclipse.gef.ui.parts.GraphicalEditorWithFlyoutPalette;
 import org.eclipse.gef.ui.parts.GraphicalViewerKeyHandler;
+import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.action.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
@@ -203,40 +205,64 @@ public class DiagramEditor extends GraphicalEditorWithFlyoutPalette implements I
 	 * returns an empty DiagramModel.
 	 * @return
 	 */
+//	private DiagramModel loadDiagramModel() {
+//		DiagramModel content = new DiagramModel();
+//		IEditorInput input = getEditorInput();
+//		if (input instanceof IFileEditorInput) {
+//	        try
+//	        {
+//	        	IFile featFile = ((IFileEditorInput) input).getFile();
+//	            setPartName(featFile.getName());
+//	            InputStream is = featFile.getContents(true);
+//	            ObjectInputStream ois = new ObjectInputStream(is);
+//	            content = (DiagramModel) ois.readObject();
+//
+//	            // Update diagram to reflect any changes made to
+//	            // associated java file since diagram closed
+//	            IProject proj = featFile.getProject();
+//	            IPath javaPath = new Path(content.getAssociatedJavaFile());
+//	            if (proj.getFullPath().isPrefixOf(javaPath)) {
+//	            	int i = javaPath.matchingFirstSegments(proj.getFullPath());
+//	            	javaPath = javaPath.removeFirstSegments(i);
+//	            }
+//	            IFile file = (IFile) proj.findMember(javaPath);
+//	            
+//	            IFile classFile = FileUtils.getClassFile(file);
+//	            FileUtils.updateDiagram(classFile, content);
+//	            ois.close();
+//	        }
+//	        // Exceptions could get thrown if saved file is empty,
+//	        // corrupt, or does not exist.
+//	        //TODO Should show error message? In pop-up? In editor?
+//	        catch (ClassCastException e) {System.err.println(e.getMessage());}
+//	        catch (CoreException e) {System.err.println(e.getMessage());} 
+//	        catch (IOException e) {System.err.println(e.getMessage());} 
+//	        catch (ClassNotFoundException e) {System.err.println(e.getMessage());}
+//		}
+//		return content;
+//	}
+	
 	private DiagramModel loadDiagramModel() {
 		DiagramModel content = new DiagramModel();
 		IEditorInput input = getEditorInput();
-		if (input instanceof IFileEditorInput) {
-	        try
-	        {
-	        	IFile featFile = ((IFileEditorInput) input).getFile();
-	            setPartName(featFile.getName());
-	            InputStream is = featFile.getContents(true);
-	            ObjectInputStream ois = new ObjectInputStream(is);
-	            content = (DiagramModel) ois.readObject();
 
-	            // Update diagram to reflect any changes made to
-	            // associated java file since diagram closed
-	            IProject proj = featFile.getProject();
-	            IPath javaPath = new Path(content.getAssociatedJavaFile());
-	            if (proj.getFullPath().isPrefixOf(javaPath)) {
-	            	int i = javaPath.matchingFirstSegments(proj.getFullPath());
-	            	javaPath = javaPath.removeFirstSegments(i);
-	            }
-	            IFile file = (IFile) proj.findMember(javaPath);
-	            
-	            IFile classFile = FileUtils.getClassFile(file);
-	            FileUtils.updateDiagram(classFile, content);
-	            ois.close();
-	        }
-	        // Exceptions could get thrown if saved file is empty,
-	        // corrupt, or does not exist.
-	        //TODO Should show error message? In pop-up? In editor?
-	        catch (ClassCastException e) {System.err.println(e.getMessage());}
-	        catch (CoreException e) {System.err.println(e.getMessage());} 
-	        catch (IOException e) {System.err.println(e.getMessage());} 
-	        catch (ClassNotFoundException e) {System.err.println(e.getMessage());}
+		assert input instanceof IFileEditorInput;
+
+		try {
+			IFile featFile = ((IFileEditorInput) input).getFile();
+			setPartName(featFile.getName());
+			InputStream is = featFile.getContents(true);
+			ObjectInputStream ois = new ObjectInputStream(is);
+			content = (DiagramModel) ois.readObject();
+			ois.close();
+		} catch (CoreException e) {
+			System.err.println(e.getMessage());
+		} catch (IOException e) {
+			System.err.println(e.getMessage());
+		} catch (ClassNotFoundException e) {
+			System.err.println(e.getMessage());
 		}
+
 		return content;
 	}
 
@@ -442,5 +468,24 @@ public class DiagramEditor extends GraphicalEditorWithFlyoutPalette implements I
 	
 	public void partBroughtToTop(IWorkbenchPart part) {
 		// Do Nothing
+	}
+	
+	public void addMembers(IType classType) {
+		DiagramPart contents = getContents();
+		DiagramModel model = contents.getDiagramModel();
+		model.addMembers(classType);
+		// note eben
+		try {
+			model.setAssociatedJavaFile(classType.getCompilationUnit().getUnderlyingResource().getFullPath().toString());
+		} catch (JavaModelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	    getGraphicalViewer().setContents(model);
+	    new ISOMLayout(model).autoArrange();
+	    refresh();
+	    setFileName();
+	    doSave(new NullProgressMonitor());		
 	}
 }

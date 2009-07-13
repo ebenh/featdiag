@@ -1,12 +1,30 @@
 package com.eclipse.featdiag.models;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.security.InvalidParameterException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.gef.EditPart;
+import org.eclipse.jdt.core.IField;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.search.IJavaSearchConstants;
+import org.eclipse.jdt.core.search.IJavaSearchScope;
+import org.eclipse.jdt.core.search.SearchEngine;
+import org.eclipse.jdt.core.search.SearchMatch;
+import org.eclipse.jdt.core.search.SearchParticipant;
+import org.eclipse.jdt.core.search.SearchPattern;
+import org.eclipse.jdt.core.search.SearchRequestor;
 
 import com.eclipse.featdiag.parser.Edge;
 import com.eclipse.featdiag.parts.DiagramPart;
@@ -28,6 +46,10 @@ public class DiagramModel extends BaseModel {
     private Map<String, FieldModel> fieldModels;
 	private Map<String, MethodModel> methodModels;
 	private List<ConnectionModel> connectionModels;
+	
+	//note eben
+	transient private IType classType;
+	private String iTypeHandleIdentifier; // used for serialization
 	
 	/**
 	 * Creates a new diagram object and inserts the class
@@ -339,5 +361,85 @@ public class DiagramModel extends BaseModel {
 	
 	public EditPart createEditPart() {
 		return new DiagramPart();
+	}
+	
+	// note eben...
+	
+	// serialization stuff
+	private void writeObject(ObjectOutputStream out) throws IOException {
+		iTypeHandleIdentifier = classType.getHandleIdentifier();
+		out.defaultWriteObject();
+	}
+
+	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+		// our "pseudo-constructor"
+		in.defaultReadObject();
+		classType = (IType) JavaCore.create(iTypeHandleIdentifier);
+	}
+	// end serialization stuff
+	
+	public void updateDiagram(){
+		// note eben
+	}
+	
+	public void addMembers(IType classType){
+		this.classType = classType;
+		
+		try {
+			for(IMethod method : classType.getMethods()){
+				addMethodModel(new MethodModel(method));
+				findReferences(method);
+			}
+			
+			for(IField field : classType.getFields()){
+				addFieldModel(new FieldModel(field));
+				findReferences(field);
+			}			
+		} catch (InvalidParameterException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JavaModelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
+	}
+
+	void findReferences(final IJavaElement javaElement){
+		assert javaElement instanceof IField;
+		assert javaElement instanceof IMethod;
+		
+		SearchPattern searchPattern = SearchPattern.createPattern(javaElement, IJavaSearchConstants.REFERENCES);
+		IJavaSearchScope searchScope = SearchEngine.createWorkspaceScope();
+		SearchEngine searchEngine = new SearchEngine();
+		SearchRequestor searchRequestor = new SearchRequestor() {
+			public void acceptSearchMatch(SearchMatch match) {
+				IMethod foundMethod = (IMethod) match.getElement();
+
+				try {
+					addMethodModel(new MethodModel(foundMethod));
+				} catch (InvalidParameterException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (JavaModelException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				if (javaElement.getElementType() == IJavaElement.FIELD) {
+					addMethodToFieldConnection(foundMethod.getElementName(), javaElement.getElementName());
+				} else if (javaElement.getElementType() == IJavaElement.METHOD) {
+					addMethodToMethodConnection(foundMethod.getElementName(), javaElement.getElementName());
+				} else {
+					assert false;
+				}
+			}
+		};
+		
+		try {
+			searchEngine.search(searchPattern, new SearchParticipant[]{SearchEngine.getDefaultSearchParticipant()}, searchScope, searchRequestor, null);
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
