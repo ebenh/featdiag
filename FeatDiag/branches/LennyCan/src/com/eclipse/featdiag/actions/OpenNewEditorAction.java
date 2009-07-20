@@ -6,14 +6,11 @@ import java.io.IOException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-//import org.eclipse.core.resources.IResourceChangeEvent;
-//import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
@@ -38,20 +35,18 @@ import com.eclipse.featdiag.editors.DiagramEditor;
  *
  */
 public class OpenNewEditorAction implements IActionDelegate {
-	ISelection selection;
+	IType selection;
 	
 	/**
 	 * Called when option to open new feature diagram is selected
 	 * from the context menu.
 	 */
 	public void run(IAction action) {
-		try {
-			IJavaElement element = (IJavaElement) ((StructuredSelection) selection).getFirstElement();
-			
+		try {			
 			//note eben
-			if ((element.getElementType() == IJavaElement.TYPE) && ((IType)element).isClass())
+			if (selection.isClass())
 			{
-				IType classType = (IType)element;
+				IType classType = selection;
 				IJavaProject javaProject = classType.getJavaProject();
 				
 				
@@ -67,6 +62,9 @@ public class OpenNewEditorAction implements IActionDelegate {
 					
 					editor.addMembers(classType);
 				}
+			}
+			else{
+				// message box, can only diagram class types (not enums)
 			}
 		} 
 		catch (JavaModelException e) {
@@ -95,9 +93,11 @@ public class OpenNewEditorAction implements IActionDelegate {
 	/**
 	 * Selected class changed.
 	 */
-	public void selectionChanged(IAction action, ISelection selection) {
+	public void selectionChanged(IAction action, ISelection selection) {	
+		assert selection != null;
+
 		if (selection instanceof StructuredSelection) {
-			this.selection = selection;
+			this.selection = (IType) ((StructuredSelection) selection).getFirstElement();
 		}
 	}
 

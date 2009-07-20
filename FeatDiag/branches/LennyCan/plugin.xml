@@ -29,7 +29,7 @@
          point="org.eclipse.ui.popupMenus">
       <objectContribution
             id="FeatDiag.menus.popup.OpenNewEditor"
-            objectClass="org.eclipse.jdt.core.IJavaElement">
+            objectClass="org.eclipse.jdt.core.IType">
          <menu
                id="FeatDiag.openEditorMenu"
                label="Feature Diagrams"
