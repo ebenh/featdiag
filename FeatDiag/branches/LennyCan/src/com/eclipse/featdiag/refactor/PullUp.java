@@ -19,7 +19,7 @@ import com.eclipse.featdiag.editors.FileSaveListener;
 import com.eclipse.featdiag.parts.DiagramPart;
 import com.eclipse.featdiag.parts.FieldPart;
 import com.eclipse.featdiag.parts.MethodPart;
-import com.eclipse.featdiag.utils.SelectionWrapper;
+//import com.eclipse.featdiag.utils.SelectionWrapper;
 
 public class PullUp implements IEditorActionDelegate {
 	private ISelection selection;

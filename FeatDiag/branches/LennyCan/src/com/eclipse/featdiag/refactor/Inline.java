@@ -21,7 +21,7 @@ import org.eclipse.ui.IEditorPart;
 import com.eclipse.featdiag.editors.DiagramEditor;
 import com.eclipse.featdiag.editors.FileSaveListener;
 import com.eclipse.featdiag.parts.*;
-import com.eclipse.featdiag.utils.SelectionWrapper;
+//import com.eclipse.featdiag.utils.SelectionWrapper;
 
 public class Inline implements IEditorActionDelegate {
 
