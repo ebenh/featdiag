@@ -352,6 +352,7 @@ public class DiagramModel extends BaseModel {
 	 * Saves this diagram to the .feat file.
 	 */
 	public void doSave() {
+		System.out.println("DO SAVE");
 		firePropertyChange(SAVE, null, null);
 	}
 
@@ -378,8 +379,8 @@ public class DiagramModel extends BaseModel {
 	}
 	// end serialization stuff
 	
-	public void updateDiagram(){
-		// note eben
+	public void update(){
+		System.out.println("Update diagram!");
 	}
 	
 	public void addMembers(IType classType){
@@ -395,10 +396,8 @@ public class DiagramModel extends BaseModel {
 				addFieldModel(new FieldModel(field));
 				findReferences(field);
 			}			
-		} catch (InvalidParameterException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (JavaModelException e) {
+		} 
+		catch (JavaModelException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}		
@@ -415,15 +414,7 @@ public class DiagramModel extends BaseModel {
 			public void acceptSearchMatch(SearchMatch match) {
 				IMethod foundMethod = (IMethod) match.getElement();
 
-				try {
-					addMethodModel(new MethodModel(foundMethod));
-				} catch (InvalidParameterException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (JavaModelException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				addMethodModel(new MethodModel(foundMethod));
 				
 				if (javaElement.getElementType() == IJavaElement.FIELD) {
 					addMethodToFieldConnection(foundMethod.getElementName(), javaElement.getElementName());

@@ -39,6 +39,7 @@ public class FileSaveListener implements IResourceChangeListener, IResourceDelta
 
 	
 	public void resourceChanged(IResourceChangeEvent event) {
+		System.out.println("yy");
 	      if (event.getType() == IResourceChangeEvent.POST_BUILD) {
 			try {
 				event.getDelta().accept(this);
@@ -50,6 +51,7 @@ public class FileSaveListener implements IResourceChangeListener, IResourceDelta
 
 	
 	public boolean visit(IResourceDelta delta) throws CoreException {
+		System.out.println("xx");
 		delta = delta.findMember(new Path(associatedClassFile));
 		if (delta != null) {
 			IResource resource = delta.getResource();
@@ -57,10 +59,12 @@ public class FileSaveListener implements IResourceChangeListener, IResourceDelta
 				((delta.getFlags() & IResourceDelta.CONTENT) > 0 ||
 				 (delta.getFlags() & IResourceDelta.ENCODING) > 0)) {
 				
-				FileUtils.updateDiagram((IFile) resource, diagram);
+				//FileUtils.updateDiagram((IFile) resource, diagram);
+				diagram.update();
 				diagram.doSave();
 			}
 		}
+		
 		return false;		
 	}
 	
@@ -68,6 +72,6 @@ public class FileSaveListener implements IResourceChangeListener, IResourceDelta
 	 * Removes this listener from the associated file.
 	 */
 	public void dispose() {
-		javaFile.getWorkspace().removeResourceChangeListener(this);
+		//javaFile.getWorkspace().removeResourceChangeListener(this);
 	}
 }

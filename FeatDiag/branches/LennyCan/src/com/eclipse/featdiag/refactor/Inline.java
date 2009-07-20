@@ -34,56 +34,56 @@ public class Inline implements IEditorActionDelegate {
 	}
 
 	public void run(IAction action) {		
-		IPath path = null;
-		try {
-			path = ((DiagramEditor) targetGraphicalViewer).getFilePath();
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-        IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path);
-        FileSaveListener listener = ((DiagramEditor) targetGraphicalViewer).setListener(file);
-        file.getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.POST_BUILD);
-        if(flag == "field") {
-        	try {
-    			if (!RefactoringAvailabilityTester.isInlineConstantAvailable((IStructuredSelection) selection)) {
-    				MessageDialog.openInformation(targetGraphicalViewer.getSite().getShell(), 
-    						"Operation Not Applicable", "The selected field is not STATIC FINAL.");
-    				return;
-    			}
-    		} catch (JavaModelException e1) {
-    			// TODO Auto-generated catch block
-    			e1.printStackTrace();
-    		}
-        	InlineConstantAction ra = new InlineConstantAction(((DiagramEditor) targetGraphicalViewer).getSite());
-        	ra.run((TreeSelection) selection);
-        }
-        else if(flag == "method") {
-        	InlineMethodAction ra = new InlineMethodAction(((DiagramEditor) targetGraphicalViewer).getSite());
-        	ra.run((TreeSelection) selection);
-        } else {
-        	MessageDialog.openInformation(targetGraphicalViewer.getSite().getShell(), 
-					"Operation Not Applicable", "The operation cannot be performed on class object.");
-        }
+//		IPath path = null;
+//		try {
+//			path = ((DiagramEditor) targetGraphicalViewer).getFilePath();
+//		} catch (IOException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}
+//        IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path);
+//        FileSaveListener listener = ((DiagramEditor) targetGraphicalViewer).setListener(file);
+//        file.getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.POST_BUILD);
+//        if(flag == "field") {
+//        	try {
+//    			if (!RefactoringAvailabilityTester.isInlineConstantAvailable((IStructuredSelection) selection)) {
+//    				MessageDialog.openInformation(targetGraphicalViewer.getSite().getShell(), 
+//    						"Operation Not Applicable", "The selected field is not STATIC FINAL.");
+//    				return;
+//    			}
+//    		} catch (JavaModelException e1) {
+//    			// TODO Auto-generated catch block
+//    			e1.printStackTrace();
+//    		}
+//        	InlineConstantAction ra = new InlineConstantAction(((DiagramEditor) targetGraphicalViewer).getSite());
+//        	ra.run((TreeSelection) selection);
+//        }
+//        else if(flag == "method") {
+//        	InlineMethodAction ra = new InlineMethodAction(((DiagramEditor) targetGraphicalViewer).getSite());
+//        	ra.run((TreeSelection) selection);
+//        } else {
+//        	MessageDialog.openInformation(targetGraphicalViewer.getSite().getShell(), 
+//					"Operation Not Applicable", "The operation cannot be performed on class object.");
+//        }
 	}
 
 	public void selectionChanged( final IAction action, 
 			final ISelection selection ) {
-		Object part = ((IStructuredSelection) selection).getFirstElement();
-		if(part instanceof FieldPart)
-			flag = "field";
-		else if(part instanceof MethodPart)
-			flag = "method";
-		else {
-			flag = "diagram";
-			this.selection = selection;
-			return;
-		}
-		SelectionWrapper sw = new SelectionWrapper(selection, targetGraphicalViewer);
-		try {
-			this.selection = sw.wrap(flag);
-		}
-		catch (IOException e) {this.selection = selection;} 
+//		Object part = ((IStructuredSelection) selection).getFirstElement();
+//		if(part instanceof FieldPart)
+//			flag = "field";
+//		else if(part instanceof MethodPart)
+//			flag = "method";
+//		else {
+//			flag = "diagram";
+//			this.selection = selection;
+//			return;
+//		}
+//		SelectionWrapper sw = new SelectionWrapper(selection, targetGraphicalViewer);
+//		try {
+//			this.selection = sw.wrap(flag);
+//		}
+//		catch (IOException e) {this.selection = selection;} 
 	}
 
 }

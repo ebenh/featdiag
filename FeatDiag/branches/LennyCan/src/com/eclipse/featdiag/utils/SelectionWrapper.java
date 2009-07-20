@@ -19,6 +19,7 @@ import org.eclipse.ui.IEditorPart;
 
 import com.eclipse.featdiag.editors.DiagramEditor;
 import com.eclipse.featdiag.models.MemberModel;
+import com.eclipse.featdiag.models.MethodModel;
 import com.eclipse.featdiag.parts.FieldPart;
 import com.eclipse.featdiag.parts.MethodPart;
 
@@ -32,45 +33,45 @@ public class SelectionWrapper {
 		this.targetGraphicalViewer = targetGraphicalViewer;
 	}
 	
-	public TreeSelection wrap(String flag) throws IOException {
-		String elementName = "";
-		String[] argtypenames = null;
-		String className = "";
-		Object part = ((IStructuredSelection) selection).getFirstElement();
-		if(flag == "field") {
-			MemberModel m = (MemberModel)((FieldPart) part).getModel();
-			elementName = m.getName();
-			className = m.getClassName();
-		}
-		else if(flag == "method") {
-			MemberModel m = (MemberModel)((MethodPart)part).getModel();
-			elementName = m.getName();
-			argtypenames = m.getArgTypeNames();
-			className = m.getClassName();
-		}
-		else
-			className = ((DiagramEditor) targetGraphicalViewer).getFilePath().removeFileExtension().lastSegment();		
-		IPath path = ((DiagramEditor) targetGraphicalViewer).getFilePath();
-        IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path);
-        ICompilationUnit cu = JavaCore.createCompilationUnitFrom(file);
-        IJavaModel model = cu.getJavaModel();
-        IJavaProject project = cu.getJavaProject();
-        IJavaElement pack =  cu.getParent();
-        IJavaElement packroot = pack.getParent();
-        IJavaElement element = null;
-        IType type = cu.getType(className);
-        if(flag == "field")
-			element = type.getField(elementName);
-		else if(flag == "method")
-			element = type.getMethod(elementName, argtypenames);
-		Object[] pathsegments = {model, project, packroot, pack, cu, type, element};
-		Object[] pathsegments2 = {model, project, packroot, pack, cu, type};
-		TreePath treepath;
-		if(flag == "diagram")
-			treepath = new TreePath(pathsegments2);
-		else
-			treepath = new TreePath(pathsegments);
-        TreeSelection treeSelection = new TreeSelection(treepath);
-        return treeSelection;
-	}
+//	public TreeSelection wrap(String flag) throws IOException {
+//		String elementName = "";
+//		String[] argtypenames = null;
+//		String className = "";
+//		Object part = ((IStructuredSelection) selection).getFirstElement();
+//		if(flag == "field") {
+//			MemberModel m = (MemberModel)((FieldPart) part).getModel();
+//			elementName = m.getName();
+//			className = m.getClassName();
+//		}
+//		else if(flag == "method") {
+//			MemberModel m = (MemberModel)((MethodPart)part).getModel();
+//			elementName = m.getName();
+//			argtypenames = ((MethodModel)m).getArgTypeNames();
+//			className = m.getClassName();
+//		}
+//		else
+//			className = ((DiagramEditor) targetGraphicalViewer).getFilePath().removeFileExtension().lastSegment();		
+//		IPath path = ((DiagramEditor) targetGraphicalViewer).getFilePath();
+//        IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path);
+//        ICompilationUnit cu = JavaCore.createCompilationUnitFrom(file);
+//        IJavaModel model = cu.getJavaModel();
+//        IJavaProject project = cu.getJavaProject();
+//        IJavaElement pack =  cu.getParent();
+//        IJavaElement packroot = pack.getParent();
+//        IJavaElement element = null;
+//        IType type = cu.getType(className);
+//        if(flag == "field")
+//			element = type.getField(elementName);
+//		else if(flag == "method")
+//			element = type.getMethod(elementName, argtypenames);
+//		Object[] pathsegments = {model, project, packroot, pack, cu, type, element};
+//		Object[] pathsegments2 = {model, project, packroot, pack, cu, type};
+//		TreePath treepath;
+//		if(flag == "diagram")
+//			treepath = new TreePath(pathsegments2);
+//		else
+//			treepath = new TreePath(pathsegments);
+//        TreeSelection treeSelection = new TreeSelection(treepath);
+//        return treeSelection;
+//	}
 }

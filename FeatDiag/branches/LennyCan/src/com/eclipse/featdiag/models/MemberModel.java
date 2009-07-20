@@ -1,6 +1,5 @@
 package com.eclipse.featdiag.models;
 
-import java.security.InvalidParameterException;
 import java.util.List;
 import java.util.Vector;
 
@@ -8,8 +7,6 @@ import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
 
 import com.eclipse.featdiag.commands.MemberAddCommand;
-import com.sun.org.apache.bcel.internal.Constants;
-
 
 /**
  * Model class that represents either a field or method.
@@ -22,11 +19,6 @@ public abstract class MemberModel extends BaseModel implements Comparable<Member
 	
 	private List<ConnectionModel> uses;
 	private List<ConnectionModel> usedBy;
-	protected String name;
-	private String imageName;
-	protected int modifiers;
-	protected String[] argtypenames;
-	protected String className;
 	private Rectangle bounds;
 	private int width;
 	private int height;
@@ -39,81 +31,20 @@ public abstract class MemberModel extends BaseModel implements Comparable<Member
 	 * Note: Exactly one of MOD_PUBLIC, MOD_PRIVATE and MOD_PROTECTED must be used.
 	 * @param name
 	 */
-	public MemberModel(String name, int modifiers, String[] argtypenames, String className) throws InvalidParameterException {
+	public MemberModel() {
 		this.uses = new Vector<ConnectionModel>();
 		this.usedBy = new Vector<ConnectionModel>();
-		this.name = name;
-		setModifiers(modifiers);
-		setArgTypeNames(argtypenames);
-		setClassName(className);
-		this.imageName = getImageFileName();
 	}
 
-	/**
-	 * Returns the name of this field or method.
-	 * @return
-	 */
-	public String getName() {
-		return name;
-	}
-	
-	/**
-	 * Sets the name of this field or method.
-	 * @param name
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
-	
 	/**
 	 * Returns the name of the file of the icon
 	 * representing this class member.
 	 * @return
 	 */
 	public String getImageName() {
-		return imageName;
+		return getImageFileName();
 	}
-	
-	/**
-	 * Checks that the given modifiers match an expected format.
-	 * Modifiers should be created using MemberModifierConstants.
-	 * ex: MOD_PROTECTED | MOD_STATIC
-	 * Note: Exactly one of MOD_PUBLIC, MOD_PRIVATE and MOD_PROTECTED must be used.
-	 * @param modifiers
-	 * @throws InvalidParameterException
-	 */
-	private void setModifiers(int modifiers) throws InvalidParameterException {
-		 int test = (modifiers & Constants.ACC_PUBLIC) + (modifiers & Constants.ACC_PRIVATE) + (modifiers & Constants.ACC_PROTECTED);
-		 if (test != Constants.ACC_PUBLIC && test != Constants.ACC_PRIVATE && test != Constants.ACC_PROTECTED) {
-            //we're only interested in the 3 main bits which represent private,public,protected,default
-            if((modifiers & 7) != 0){//modifier must be default otherwise it is invalid
-			 this.modifiers = 0;
-			 throw new InvalidParameterException("Exactly one of MOD_PUBLIC, MOD_PRIVATE and MOD_PROTECTED must be used");
-            }
-		 }
-		 this.modifiers = modifiers;
-	}
-	
-	public int getModifiers() {
-		return modifiers;
-	}
-	
-	private void setArgTypeNames(String[] argtypenames) {
-		this.argtypenames = argtypenames;
-	}
-	
-	public String[] getArgTypeNames() {
-		return argtypenames;
-	}
-	
-	private void setClassName(String className) {
-		this.className = className;
-	}
-	
-	public String getClassName() {
-		return className;
-	}
-	
+		
 	/**
 	 * Changes the stored location of the image of this
 	 * model to a new location.
@@ -258,4 +189,11 @@ public abstract class MemberModel extends BaseModel implements Comparable<Member
 	public abstract MemberAddCommand getAddCommand(DiagramModel diagram, Point location);
 	public abstract String toString();
 	protected abstract String getImageFileName();
+	
+	
+	public abstract String getName();
+	
+	public abstract int getModifiers();
+	
+	public abstract String getClassName();
 }

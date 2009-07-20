@@ -290,7 +290,7 @@ public class Parser {
                 String className = clazz.getClassName();
                 int index = className.indexOf(".");
                 className = className.substring(index+1);
-                this.methods.add(new MethodModel(methods[i].getName(), modifier, argtypenames, className));
+                //this.methods.add(new MethodModel(methods[i].getName(), modifier, argtypenames, className));
             }
         }
     }
@@ -319,7 +319,7 @@ public class Parser {
             String className = clazz.getClassName();
             int index = className.indexOf(".");
             className = className.substring(index+1);
-            this.fields.add(new FieldModel(field.getName(), modifier, type, className));
+            //this.fields.add(new FieldModel(field.getName(), modifier, type, className));
         }
     }
     

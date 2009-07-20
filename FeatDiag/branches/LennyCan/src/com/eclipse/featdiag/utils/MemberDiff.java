@@ -59,8 +59,8 @@ public class MemberDiff<Type extends Comparable<? super Type>> {
     		if (memberBase instanceof MethodModel &&
         			((MemberModel) memberBase).getName().equals(
         					((MemberModel) memberMod).getName())) {
-    			String[] baseArgTypes = ((MemberModel) memberBase).getArgTypeNames();
-    			String[] modArgTypes = ((MemberModel) memberMod).getArgTypeNames();
+    			String[] baseArgTypes = ((MethodModel) memberBase).getArgTypeNames();
+    			String[] modArgTypes = ((MethodModel) memberMod).getArgTypeNames();
     			if (baseArgTypes.length != modArgTypes.length) {
     				removed.add(memberBase);
         			added.add(memberMod);

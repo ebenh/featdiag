@@ -1,11 +1,14 @@
 package com.eclipse.featdiag.models;
 
-import java.security.InvalidParameterException;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.gef.EditPart;
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 
 import com.eclipse.featdiag.commands.MemberAddCommand;
@@ -24,19 +27,19 @@ public class MethodModel extends MemberModel {
 
     private static final long serialVersionUID = -7662632863314325089L;
 
+    transient IMethod method;
+    private String iTypeHandleIdentifier; // used for serialization
+	
     /**
 	 * Create a new method model with the given name, 
 	 * and the given modifiers.
 	 * @param name
 	 * @param modifiers
 	 * @param fieldType
-	 */
-	public MethodModel(String name, int modifiers, String[] argtypenames, String className) throws InvalidParameterException {
-		super(name, modifiers, argtypenames, className);
-	}
-	
-	public MethodModel(IMethod method) throws InvalidParameterException, JavaModelException {
-		super(method.getElementName(), getModifiers(method.getFlags()), method.getParameterTypes(), method.getDeclaringType().getElementName());
+	 */	
+	public MethodModel(IMethod method){
+		super();
+		this.method = method;
 	}
 		
 	private static int getModifiers(int flags){
@@ -76,7 +79,7 @@ public class MethodModel extends MemberModel {
 	 */
 	
 	public String toString() {
-		return name + "(...)";
+		return method.getElementName() + "(...)";
 	}
 	
 	/**
@@ -85,6 +88,61 @@ public class MethodModel extends MemberModel {
 	 */
 	
 	protected String getImageFileName() {
-		return IconMap.getMethodIconName(modifiers);
+		String ret = "";
+		try {
+			ret = IconMap.getMethodIconName(getModifiers(method.getFlags()));
+		} catch (JavaModelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return ret;
 	}
+	
+	public String[] getArgTypeNames() {
+		//return argtypenames;
+		String[] ret = new String[1];
+		try {
+			ret = method.getParameterNames();
+		} catch (JavaModelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return ret;
+	}
+	
+	public String getName() {
+		return method.getElementName();
+	}
+	
+	public int getModifiers() {
+		int flags = 0;
+		try {
+			flags = getModifiers(method.getFlags());
+		} catch (JavaModelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return flags;
+	}
+	
+	public String getClassName() {
+		return method.getDeclaringType().getElementName();
+	}
+	
+	// serialization stuff
+	private void writeObject(ObjectOutputStream out) throws IOException {
+		iTypeHandleIdentifier = method.getHandleIdentifier();
+		out.defaultWriteObject();
+	}
+
+	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+		// our "pseudo-constructor"
+		in.defaultReadObject();
+		method = (IMethod) JavaCore.create(iTypeHandleIdentifier);
+	}
+	
+	public IMethod getMethod(){
+		return method;
+	}
+	// end serialization stuff
 }

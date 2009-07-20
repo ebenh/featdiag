@@ -1,85 +1,41 @@
 package com.eclipse.featdiag.refactor;
 
-import java.io.IOException;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.ResourcesPlugin;
-
-import org.eclipse.core.runtime.IPath;
-
-import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.internal.corext.refactoring.RefactoringAvailabilityTester;
 import org.eclipse.jdt.ui.actions.ModifyParametersAction;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 
-import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorPart;
 
-
-import com.eclipse.featdiag.editors.DiagramEditor;
-import com.eclipse.featdiag.editors.FileSaveListener;
-
+import com.eclipse.featdiag.models.MethodModel;
 import com.eclipse.featdiag.parts.*;
-import com.eclipse.featdiag.utils.SelectionWrapper;
 
 public class ChangeMethodSignature implements IEditorActionDelegate {
-
 	private ISelection selection;
-	private IEditorPart targetGraphicalViewer;
-	private String flag;
-	
+	private IEditorPart graphicalViewer;
+
 	public void setActiveEditor(IAction action, IEditorPart graphicalViewer) {
-		targetGraphicalViewer = graphicalViewer;
+		this.graphicalViewer = graphicalViewer;
 	}
 
 	public void run(IAction action) {
-		
 		try {
-			if (!RefactoringAvailabilityTester.isChangeSignatureAvailable((IStructuredSelection) selection)) {
-				MessageDialog.openInformation(targetGraphicalViewer.getSite().getShell(), 
-						"Operation Not Applicable", "The operation can only be performed on methods.");
-				return;
-			}
-		} catch (JavaModelException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		IPath path = null;
-		try {
-			path = ((DiagramEditor) targetGraphicalViewer).getFilePath();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path);
-        FileSaveListener listener = ((DiagramEditor) targetGraphicalViewer).setListener(file);
-        file.getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.POST_BUILD);
-        ModifyParametersAction ra = new ModifyParametersAction(((DiagramEditor) targetGraphicalViewer).getSite());
-        ra.run((TreeSelection) selection);
-	}
+			MethodPart element = (MethodPart) ((StructuredSelection) selection).getFirstElement();
+			MethodModel model = (MethodModel) element.getMemberModel();
 
-	public void selectionChanged( final IAction action, 
-			final ISelection selection ) {
-		
-		Object part = ((IStructuredSelection) selection).getFirstElement();
-		if(part instanceof MethodPart) {
-			flag = "method";
-		}
-		else {
-			this.selection = selection;
-			return;
-		}
-		SelectionWrapper sw = new SelectionWrapper(selection, targetGraphicalViewer);
-		try {
-			this.selection = sw.wrap(flag);
-		} catch (IOException e) {
-			this.selection = selection;
+			ModifyParametersAction ra = new ModifyParametersAction(graphicalViewer.getSite());
+			ra.run(new StructuredSelection(model.getMethod()));
+		} catch (ClassCastException e) {
+			MessageDialog.openInformation(graphicalViewer.getSite().getShell(), "Operation Not Applicable",
+					"The operation can only be performed on methods.");
 		}
 	}
 
+	public void selectionChanged(IAction action, ISelection selection) {
+		if (selection instanceof StructuredSelection) {
+			this.selection = selection;
+		}
+	}
 }

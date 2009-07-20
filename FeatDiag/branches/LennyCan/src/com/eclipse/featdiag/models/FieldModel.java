@@ -1,11 +1,14 @@
 package com.eclipse.featdiag.models;
 
-import java.security.InvalidParameterException;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.gef.EditPart;
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.IField;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 
 import com.eclipse.featdiag.commands.FieldAddCommand;
@@ -27,23 +30,19 @@ public class FieldModel extends MemberModel {
     /**
      * The string representation of the field's type
      */
-    private String fieldType;
-
-	/**
+    transient IField field;
+    private String iTypeHandleIdentifier; // used for serialization
+	
+    /**
 	 * Create a new field model with the given name, of
 	 * the given class type, with the given modifiers.
 	 * @param name
 	 * @param modifiers
 	 * @param fieldType
-	 */
-	public FieldModel(String name, int modifiers, String fieldType, String className) {
-		super(name, modifiers, null, className);
-		this.fieldType = fieldType;
-	}
-	
-	public FieldModel(IField field) throws InvalidParameterException, JavaModelException {
-		super(field.getElementName(), getModifiers(field.getFlags()), null, field.getDeclaringType().getElementName());
-		this.fieldType = field.getTypeSignature();
+	 */	
+    public FieldModel(IField field) {
+		super();
+		this.field = field;
 	}
 	
 	private static int getModifiers(int flags){
@@ -82,7 +81,14 @@ public class FieldModel extends MemberModel {
 	 */
 	
 	public String toString() {
-		return fieldType + " " + name; 
+		String ret = "";
+		try {
+			ret = field.getTypeSignature() + " " + field.getElementName();
+		} catch (JavaModelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		return ret;
 	}
 
 	/**
@@ -90,6 +96,49 @@ public class FieldModel extends MemberModel {
 	 * for this field
 	 */
 	protected String getImageFileName() {
-		return IconMap.getFieldIconName(modifiers);
+		String ret = "";
+		try {
+			ret = IconMap.getFieldIconName(getModifiers(field.getFlags()));
+		} catch (JavaModelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return ret;
+	}
+	
+	public String getName() {
+		return field.getElementName();
+	}
+	
+	public int getModifiers() {
+		int flags = 0;
+		try {
+			flags = getModifiers(field.getFlags());
+		} catch (JavaModelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return flags;
+	}
+	
+	public String getClassName() {
+		return field.getDeclaringType().getElementName();
+	}
+	
+	// serialization stuff
+	private void writeObject(ObjectOutputStream out) throws IOException {
+		iTypeHandleIdentifier = field.getHandleIdentifier();
+		out.defaultWriteObject();
+	}
+
+	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+		// our "pseudo-constructor"
+		in.defaultReadObject();
+		field = (IField) JavaCore.create(iTypeHandleIdentifier);
+	}
+	// end serialization stuff
+	
+	public IField getField(){
+		return field;
 	}
 }

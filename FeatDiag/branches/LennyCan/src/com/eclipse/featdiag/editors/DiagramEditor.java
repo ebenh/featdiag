@@ -8,14 +8,14 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
+//import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
+//import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
+//import org.eclipse.core.runtime.Path;
 import org.eclipse.gef.DefaultEditDomain;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.GraphicalViewer;
@@ -45,8 +45,8 @@ import com.eclipse.featdiag.editors.palette.PaletteViewer;
 import com.eclipse.featdiag.factories.BaseFactory;
 import com.eclipse.featdiag.models.DiagramModel;
 import com.eclipse.featdiag.models.PaletteModel;
-import com.eclipse.featdiag.parser.InvalidClassName;
-import com.eclipse.featdiag.parser.Parser;
+//import com.eclipse.featdiag.parser.InvalidClassName;
+//import com.eclipse.featdiag.parser.Parser;
 import com.eclipse.featdiag.parser.meyers.ISOMLayout;
 import com.eclipse.featdiag.parts.DiagramPart;
 import com.eclipse.featdiag.utils.FileUtils;
@@ -118,18 +118,23 @@ public class DiagramEditor extends GraphicalEditorWithFlyoutPalette implements I
 		control.setMenu(menu);
 		
 		// Set up listeners for file changes.
-		IPath path = null;
-		try {
-			path = getFilePath();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		if (path != null) {
-			IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path);
-			FileSaveListener listener = setListener(file);
-			file.getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.POST_BUILD);
-		}
+//		IPath path = null;
+//		try {
+//			path = getFilePath();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		if (path != null) {
+//			IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path);
+//			FileSaveListener listener = setListener(file);
+//			System.out.println("Creating listener for " + file);
+//			file.getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.POST_BUILD);
+//		}
+		
+		System.out.println("Creating listener");
+		listener = new FileSaveListener(contents, null, null);
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.POST_BUILD);
 	}
 	
 	
@@ -151,33 +156,6 @@ public class DiagramEditor extends GraphicalEditorWithFlyoutPalette implements I
 			((ScalableRootEditPart) getGraphicalViewer().getRootEditPart()).getZoomManager().setZoomAsText(ZoomManager.FIT_ALL);
 		else
 			((ScalableRootEditPart) getGraphicalViewer().getRootEditPart()).getZoomManager().setZoom(zoom);
-	}
-	
-	public IPath getFilePath() throws IOException{
-		IPath filePath = new Path("");
-		DiagramModel content = new DiagramModel();
-		IEditorInput input = getEditorInput();
-		if (input instanceof IFileEditorInput) {
-	        try
-	        {
-	        	IFile featFile = ((IFileEditorInput) input).getFile();
-	        	IPath workSpacePath = featFile.getLocation().removeLastSegments(2);
-	            setPartName(featFile.getName());
-	            InputStream is = featFile.getContents(true);
-	            ObjectInputStream ois = new ObjectInputStream(is);
-	            content = (DiagramModel) ois.readObject();
-	            IPath javaPath = new Path(content.getAssociatedJavaFile());
-	            filePath = workSpacePath.append(javaPath.makeAbsolute());
-	            ois.close();
-	        }
-	        // Exceptions could get thrown if saved file is empty,
-	        // corrupt, or does not exist.
-	        //TODO Should show error message? In pop-up? In editor?
-	        catch (ClassCastException e) {System.err.println(e.getMessage());}
-	        catch (CoreException e) {System.err.println(e.getMessage());} 
-	        catch (ClassNotFoundException e) {System.err.println(e.getMessage());}
-		}
-		return filePath;
 	}
 	
 	public void commandStackChanged(EventObject evt) {
@@ -205,43 +183,6 @@ public class DiagramEditor extends GraphicalEditorWithFlyoutPalette implements I
 	 * returns an empty DiagramModel.
 	 * @return
 	 */
-//	private DiagramModel loadDiagramModel() {
-//		DiagramModel content = new DiagramModel();
-//		IEditorInput input = getEditorInput();
-//		if (input instanceof IFileEditorInput) {
-//	        try
-//	        {
-//	        	IFile featFile = ((IFileEditorInput) input).getFile();
-//	            setPartName(featFile.getName());
-//	            InputStream is = featFile.getContents(true);
-//	            ObjectInputStream ois = new ObjectInputStream(is);
-//	            content = (DiagramModel) ois.readObject();
-//
-//	            // Update diagram to reflect any changes made to
-//	            // associated java file since diagram closed
-//	            IProject proj = featFile.getProject();
-//	            IPath javaPath = new Path(content.getAssociatedJavaFile());
-//	            if (proj.getFullPath().isPrefixOf(javaPath)) {
-//	            	int i = javaPath.matchingFirstSegments(proj.getFullPath());
-//	            	javaPath = javaPath.removeFirstSegments(i);
-//	            }
-//	            IFile file = (IFile) proj.findMember(javaPath);
-//	            
-//	            IFile classFile = FileUtils.getClassFile(file);
-//	            FileUtils.updateDiagram(classFile, content);
-//	            ois.close();
-//	        }
-//	        // Exceptions could get thrown if saved file is empty,
-//	        // corrupt, or does not exist.
-//	        //TODO Should show error message? In pop-up? In editor?
-//	        catch (ClassCastException e) {System.err.println(e.getMessage());}
-//	        catch (CoreException e) {System.err.println(e.getMessage());} 
-//	        catch (IOException e) {System.err.println(e.getMessage());} 
-//	        catch (ClassNotFoundException e) {System.err.println(e.getMessage());}
-//		}
-//		return content;
-//	}
-	
 	private DiagramModel loadDiagramModel() {
 		DiagramModel content = new DiagramModel();
 		IEditorInput input = getEditorInput();
@@ -290,20 +231,23 @@ public class DiagramEditor extends GraphicalEditorWithFlyoutPalette implements I
 	 * @param classFile
 	 * @throws CoreException 
 	 */
-	public void addMembers (String classFile, String associatedJavaFile) throws CoreException {
-	    try {
-	    	DiagramPart contents = getContents();
-	    	DiagramModel model = contents.getDiagramModel();
-	    	model.setAssociatedJavaFile(associatedJavaFile);
-	    	
-            new Parser(classFile).addMembersToDiagram(model);
-            getGraphicalViewer().setContents(model);
-            new ISOMLayout(model).autoArrange();
-            refresh();
-            setFileName();
-            doSave(new NullProgressMonitor());
-        }
-	    catch(InvalidClassName e) {}
+	public void addMembers(IType classType) {
+		DiagramPart contents = getContents();
+		DiagramModel model = contents.getDiagramModel();
+		model.addMembers(classType);
+		// note eben
+		try {
+			model.setAssociatedJavaFile(classType.getCompilationUnit().getUnderlyingResource().getFullPath().toString());
+		} catch (JavaModelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	    getGraphicalViewer().setContents(model);
+	    new ISOMLayout(model).autoArrange();
+	    refresh();
+	    setFileName();
+	    doSave(new NullProgressMonitor());		
 	}
 	
 	/**
@@ -376,28 +320,7 @@ public class DiagramEditor extends GraphicalEditorWithFlyoutPalette implements I
 		
 		return null;
 	}
-	
-	/**
-	 * Set the file listener for the part associated with
-	 * the given file.
-	 * @author Lenny Han
-	 * @param file
-	 * @return the file listener
-	 */
-	public FileSaveListener setListener(IFile file) {
-		DiagramPart contents = getContents();			
-		if (contents != null) {
-			DiagramModel model = contents.getDiagramModel();
-			if (file != null) {
-				IFile classFile = FileUtils.getClassFile(file);
-				String classFileString = classFile.getFullPath().toString();
-				listener = new FileSaveListener(model, file, classFileString);
-				javaFileOpen = true;				
-			}
-		}
-		return listener;
-	}
-	
+		
 	/**
 	 * Check if the recently opened/activated part is the
 	 * java file associated with this diagram. If it is,
@@ -468,24 +391,5 @@ public class DiagramEditor extends GraphicalEditorWithFlyoutPalette implements I
 	
 	public void partBroughtToTop(IWorkbenchPart part) {
 		// Do Nothing
-	}
-	
-	public void addMembers(IType classType) {
-		DiagramPart contents = getContents();
-		DiagramModel model = contents.getDiagramModel();
-		model.addMembers(classType);
-		// note eben
-		try {
-			model.setAssociatedJavaFile(classType.getCompilationUnit().getUnderlyingResource().getFullPath().toString());
-		} catch (JavaModelException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-	    getGraphicalViewer().setContents(model);
-	    new ISOMLayout(model).autoArrange();
-	    refresh();
-	    setFileName();
-	    doSave(new NullProgressMonitor());		
 	}
 }
