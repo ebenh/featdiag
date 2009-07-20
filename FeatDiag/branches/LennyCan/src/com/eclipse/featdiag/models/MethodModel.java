@@ -13,7 +13,6 @@ import org.eclipse.jdt.core.Signature;
 
 import com.eclipse.featdiag.commands.MemberAddCommand;
 import com.eclipse.featdiag.commands.MethodAddCommand;
-import com.eclipse.featdiag.models.modifiers.IconMap;
 import com.eclipse.featdiag.parts.MethodPart;
 
 
@@ -77,21 +76,6 @@ public class MethodModel extends MemberModel {
 			}
 			
 			return Signature.toString(methodSignature, methodName, parameterNames, true, true);
-	}
-	/**
-	 * Returns the name of the image file for the icon
-	 * for this method
-	 */
-	
-	protected String getImageFileName() {
-		String ret = "";
-		try {
-			ret = IconMap.getMethodIconName(method.getFlags());
-		} catch (JavaModelException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return ret;
 	}
 	
 	public String[] getArgTypeNames() {

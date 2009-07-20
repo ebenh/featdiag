@@ -16,6 +16,7 @@ import org.eclipse.swt.graphics.Point;
 
 import com.eclipse.featdiag.editors.FeatDiagPlugin;
 import com.eclipse.featdiag.models.MemberModel;
+import com.eclipse.featdiag.models.modifiers.IconMap;
 import com.sun.org.apache.bcel.internal.Constants;
 
 
@@ -50,8 +51,8 @@ public class FigureInitializer {
 	 * @param model
 	 * @return
 	 */
-	private static Label makeLabel(MemberModel model) {
-		String s = "icons" + File.separator + model.getImageName();
+	private static Label makeLabel(MemberModel model) { 
+		String s = "icons" + File.separator + IconMap.getMethodIconName(model.getModifiers());
 		
 		ImageDescriptor id = FeatDiagPlugin.getImageDescriptor(s);
 		Image im = id.createImage();

@@ -35,15 +35,6 @@ public abstract class MemberModel extends BaseModel implements Comparable<Member
 		this.uses = new Vector<ConnectionModel>();
 		this.usedBy = new Vector<ConnectionModel>();
 	}
-
-	/**
-	 * Returns the name of the file of the icon
-	 * representing this class member.
-	 * @return
-	 */
-	public String getImageName() {
-		return getImageFileName();
-	}
 		
 	/**
 	 * Changes the stored location of the image of this
@@ -189,8 +180,6 @@ public abstract class MemberModel extends BaseModel implements Comparable<Member
 	public abstract MemberAddCommand getAddCommand(DiagramModel diagram, Point location);
 	
 	public abstract String toString();
-	
-	protected abstract String getImageFileName();
 	
 	public abstract String getName();
 	

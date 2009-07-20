@@ -6,7 +6,6 @@ import java.io.ObjectOutputStream;
 
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.gef.EditPart;
-import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
@@ -14,7 +13,6 @@ import org.eclipse.jdt.core.Signature;
 
 import com.eclipse.featdiag.commands.FieldAddCommand;
 import com.eclipse.featdiag.commands.MemberAddCommand;
-import com.eclipse.featdiag.models.modifiers.IconMap;
 import com.eclipse.featdiag.parts.FieldPart;
 
 
@@ -77,21 +75,6 @@ public class FieldModel extends MemberModel {
 			e.printStackTrace();
 		} 
 		
-		return ret;
-	}
-
-	/**
-	 * Returns the name of the image file for the icon
-	 * for this field
-	 */
-	protected String getImageFileName() {
-		String ret = "";
-		try {
-			ret = IconMap.getFieldIconName(field.getFlags());
-		} catch (JavaModelException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		return ret;
 	}
 	
