@@ -10,6 +10,7 @@ import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.Signature;
 
 import com.eclipse.featdiag.commands.FieldAddCommand;
 import com.eclipse.featdiag.commands.MemberAddCommand;
@@ -45,20 +46,6 @@ public class FieldModel extends MemberModel {
 		this.field = field;
 	}
 	
-	private static int getModifiers(int flags){
-		int ret = 0;
-		
-		if((flags & Flags.AccPublic) == Flags.AccPublic){
-			ret |= 1;
-		}
-		else if((flags & Flags.AccPublic) == Flags.AccPrivate){
-			ret |= 2;
-		}
-		else if((flags & Flags.AccPublic) == Flags.AccProtected){
-			ret |= 4;
-		}
-		return ret;
-	}
 	/**
 	 * Creates a new FieldPart.
 	 */
@@ -82,12 +69,14 @@ public class FieldModel extends MemberModel {
 	
 	public String toString() {
 		String ret = "";
+		
 		try {
-			ret = field.getTypeSignature() + " " + field.getElementName();
+			ret = Signature.toString(field.getTypeSignature()) + " " + field.getElementName();
 		} catch (JavaModelException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
+		
 		return ret;
 	}
 
@@ -98,7 +87,7 @@ public class FieldModel extends MemberModel {
 	protected String getImageFileName() {
 		String ret = "";
 		try {
-			ret = IconMap.getFieldIconName(getModifiers(field.getFlags()));
+			ret = IconMap.getFieldIconName(field.getFlags());
 		} catch (JavaModelException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -113,7 +102,7 @@ public class FieldModel extends MemberModel {
 	public int getModifiers() {
 		int flags = 0;
 		try {
-			flags = getModifiers(field.getFlags());
+			flags = field.getFlags();
 		} catch (JavaModelException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

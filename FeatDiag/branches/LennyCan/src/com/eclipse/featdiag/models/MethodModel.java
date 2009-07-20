@@ -6,10 +6,10 @@ import java.io.ObjectOutputStream;
 
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.gef.EditPart;
-import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.Signature;
 
 import com.eclipse.featdiag.commands.MemberAddCommand;
 import com.eclipse.featdiag.commands.MethodAddCommand;
@@ -41,22 +41,7 @@ public class MethodModel extends MemberModel {
 		super();
 		this.method = method;
 	}
-		
-	private static int getModifiers(int flags){
-		int ret = 0;
-		
-		if((flags & Flags.AccPublic) == Flags.AccPublic){
-			ret |= 1;
-		}
-		else if((flags & Flags.AccPublic) == Flags.AccPrivate){
-			ret |= 2;
-		}
-		else if((flags & Flags.AccPublic) == Flags.AccProtected){
-			ret |= 4;
-		}
-		return ret;
-	}
-	
+			
 	/**
 	 * Creates a new MethodPart.
 	 */
@@ -78,10 +63,21 @@ public class MethodModel extends MemberModel {
 	 * ex: "setMessage(String message)"
 	 */
 	
-	public String toString() {
-		return method.getElementName() + "(...)";
+	public String toString() {			
+			String methodSignature = "";
+			String methodName = method.getDeclaringType().getElementName() + "." + method.getElementName();
+			String[] parameterNames = {};
+			
+			try {
+				methodSignature = method.getSignature();
+				parameterNames = method.getParameterNames();
+			} catch (JavaModelException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			return Signature.toString(methodSignature, methodName, parameterNames, true, true);
 	}
-	
 	/**
 	 * Returns the name of the image file for the icon
 	 * for this method
@@ -90,7 +86,7 @@ public class MethodModel extends MemberModel {
 	protected String getImageFileName() {
 		String ret = "";
 		try {
-			ret = IconMap.getMethodIconName(getModifiers(method.getFlags()));
+			ret = IconMap.getMethodIconName(method.getFlags());
 		} catch (JavaModelException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -99,14 +95,15 @@ public class MethodModel extends MemberModel {
 	}
 	
 	public String[] getArgTypeNames() {
-		//return argtypenames;
-		String[] ret = new String[1];
+		String[] ret = {};
+		
 		try {
 			ret = method.getParameterNames();
 		} catch (JavaModelException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 		return ret;
 	}
 	
@@ -117,7 +114,7 @@ public class MethodModel extends MemberModel {
 	public int getModifiers() {
 		int flags = 0;
 		try {
-			flags = getModifiers(method.getFlags());
+			flags = method.getFlags();
 		} catch (JavaModelException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

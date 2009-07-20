@@ -187,9 +187,10 @@ public abstract class MemberModel extends BaseModel implements Comparable<Member
 	}
 
 	public abstract MemberAddCommand getAddCommand(DiagramModel diagram, Point location);
-	public abstract String toString();
-	protected abstract String getImageFileName();
 	
+	public abstract String toString();
+	
+	protected abstract String getImageFileName();
 	
 	public abstract String getName();
 	
