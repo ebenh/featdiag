@@ -26,6 +26,7 @@ import org.eclipse.jdt.core.search.SearchPattern;
 import org.eclipse.jdt.core.search.SearchRequestor;
 
 import com.eclipse.featdiag.parser.Edge;
+import com.eclipse.featdiag.parser.meyers.ISOMLayout;
 import com.eclipse.featdiag.parts.DiagramPart;
 
 
@@ -47,7 +48,7 @@ public class DiagramModel extends BaseModel {
 	private List<ConnectionModel> connectionModels;
 	
 	//note eben
-	transient private IType classType;
+	transient private IType classType = null;
 	private String iTypeHandleIdentifier; // used for serialization
 	
 	/**
@@ -56,8 +57,8 @@ public class DiagramModel extends BaseModel {
 	 */
 	public DiagramModel() {
 		palette = new PaletteModel();
-		fieldModels = new HashMap<String, FieldModel>();
-		methodModels = new HashMap<String, MethodModel>();
+		fieldModels = new HashMap <String, FieldModel>();
+		methodModels = new HashMap <String, MethodModel>();
 		connectionModels = new Vector<ConnectionModel>();
 	}
 	
@@ -379,12 +380,32 @@ public class DiagramModel extends BaseModel {
 	// end serialization stuff
 	
 	public void update(){
-		System.out.println("Update diagram!");
+		if(classType == null)
+			return;
+		
+		connectionModels.clear();
+		
+		for(FieldModel field : fieldModels.values()){
+			removeConnections(field);
+			firePropertyChange(CHILD, field, null);
+		}
+		fieldModels.clear();
+
+		for(MethodModel method : methodModels.values()){
+			removeConnections(method);
+			firePropertyChange(CHILD, method, null);
+		}
+		methodModels.clear();
+
+		addMembers();
 	}
 	
 	public void addMembers(IType classType){
-		this.classType = classType;
-		
+		this.classType = classType;	
+		addMembers();
+	}
+	
+	protected void addMembers(){
 		try {
 			for(IMethod method : classType.getMethods()){
 				addMethodModel(new MethodModel(method));
@@ -399,10 +420,10 @@ public class DiagramModel extends BaseModel {
 		catch (JavaModelException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}		
+		}	
 	}
 
-	void findReferences(final IJavaElement javaElement){
+	protected void findReferences(final IJavaElement javaElement){
 		assert javaElement instanceof IField;
 		assert javaElement instanceof IMethod;
 		
@@ -411,16 +432,17 @@ public class DiagramModel extends BaseModel {
 		SearchEngine searchEngine = new SearchEngine();
 		SearchRequestor searchRequestor = new SearchRequestor() {
 			public void acceptSearchMatch(SearchMatch match) {
-				IMethod foundMethod = (IMethod) match.getElement();
-
-				addMethodModel(new MethodModel(foundMethod));
+				if(((IJavaElement)match.getElement()).getElementType() == IJavaElement.METHOD){
+					IMethod foundMethod = (IMethod) match.getElement();
+					addMethodModel(new MethodModel(foundMethod));
 				
-				if (javaElement.getElementType() == IJavaElement.FIELD) {
-					addMethodToFieldConnection(foundMethod.getElementName(), javaElement.getElementName());
-				} else if (javaElement.getElementType() == IJavaElement.METHOD) {
-					addMethodToMethodConnection(foundMethod.getElementName(), javaElement.getElementName());
-				} else {
-					assert false;
+					if (javaElement.getElementType() == IJavaElement.FIELD) {
+						addMethodToFieldConnection(foundMethod.getElementName(), javaElement.getElementName());
+					} else if (javaElement.getElementType() == IJavaElement.METHOD) {
+						addMethodToMethodConnection(foundMethod.getElementName(), javaElement.getElementName());
+					} else {
+						assert false;
+					}
 				}
 			}
 		};

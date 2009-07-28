@@ -29,6 +29,7 @@ public class MethodModel extends MemberModel {
     transient IMethod method;
     private String iTypeHandleIdentifier; // used for serialization
 	
+    String toStringName;
     /**
 	 * Create a new method model with the given name, 
 	 * and the given modifiers.
@@ -39,6 +40,20 @@ public class MethodModel extends MemberModel {
 	public MethodModel(IMethod method){
 		super();
 		this.method = method;
+		
+		String methodSignature = "";
+		String methodName = method.getDeclaringType().getElementName() + "." + method.getElementName();
+		String[] parameterNames = {};
+		
+		try {
+			methodSignature = method.getSignature();
+			parameterNames = method.getParameterNames();
+		} catch (JavaModelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		toStringName = Signature.toString(methodSignature, methodName, parameterNames, true, true);
 	}
 			
 	/**
@@ -63,19 +78,20 @@ public class MethodModel extends MemberModel {
 	 */
 	
 	public String toString() {			
-			String methodSignature = "";
-			String methodName = method.getDeclaringType().getElementName() + "." + method.getElementName();
-			String[] parameterNames = {};
-			
-			try {
-				methodSignature = method.getSignature();
-				parameterNames = method.getParameterNames();
-			} catch (JavaModelException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			return Signature.toString(methodSignature, methodName, parameterNames, true, true);
+//			String methodSignature = "";
+//			String methodName = method.getDeclaringType().getElementName() + "." + method.getElementName();
+//			String[] parameterNames = {};
+//			
+//			try {
+//				methodSignature = method.getSignature();
+//				parameterNames = method.getParameterNames();
+//			} catch (JavaModelException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//			
+//			return Signature.toString(methodSignature, methodName, parameterNames, true, true);
+		return toStringName;
 	}
 	
 	public String[] getArgTypeNames() {

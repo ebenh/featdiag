@@ -32,6 +32,7 @@ public class FieldModel extends MemberModel {
     transient IField field;
     private String iTypeHandleIdentifier; // used for serialization
 	
+    String toStringName;
     /**
 	 * Create a new field model with the given name, of
 	 * the given class type, with the given modifiers.
@@ -42,6 +43,13 @@ public class FieldModel extends MemberModel {
     public FieldModel(IField field) {
 		super();
 		this.field = field;
+		
+		try {
+			toStringName = Signature.toString(field.getTypeSignature()) + " " + field.getElementName();
+		} catch (JavaModelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
 	}
 	
 	/**
@@ -66,16 +74,17 @@ public class FieldModel extends MemberModel {
 	 */
 	
 	public String toString() {
-		String ret = "";
-		
-		try {
-			ret = Signature.toString(field.getTypeSignature()) + " " + field.getElementName();
-		} catch (JavaModelException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
-		
-		return ret;
+//		String ret = "";
+//		
+//		try {
+//			ret = Signature.toString(field.getTypeSignature()) + " " + field.getElementName();
+//		} catch (JavaModelException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} 
+//		
+//		return ret;
+		return toStringName;
 	}
 	
 	public String getName() {

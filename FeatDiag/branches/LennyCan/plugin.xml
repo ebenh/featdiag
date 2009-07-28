@@ -48,7 +48,7 @@
    </extension>
    <extension point="org.eclipse.ui.popupMenus">
    <viewerContribution targetID="featdiag.editors.FeatureDiagramEditor" id="id1">
-   	<action label="Encapsulate Field" id="encapfield" menubarPath="refactor/Open" class="com.eclipse.featdiag.refactor.EncapsulateField"></action>
+   	<action label="Encapsulate Field" id="encapfield" menubarPath="refactor/Open" class="com.eclipse.featdiag.refactor.ChangeMethodSignature"></action>
    	<action label="Push Down" id="pushdown" menubarPath="refactor/Open" class="com.eclipse.featdiag.refactor.PushDown"></action><action id="pullup" label="Pull Up" menubarPath="refactor/Open" class="com.eclipse.featdiag.refactor.PullUp"></action>
 
    	<action label="150%" id="zoom150" menubarPath="zoom/Open" class="com.eclipse.featdiag.zoom.Zoom150"></action>
@@ -64,7 +64,7 @@
    	
    	<action label="Extract Interface" id="extractinterface" menubarPath="refactor/Open" class="com.eclipse.featdiag.refactor.ExtractInterface"></action>
    	
-   	<action label="Extract Superclass" id="extractsuperclass" menubarPath="refactor/Open" class="com.eclipse.featdiag.refactor.ExtractSuperclass"></action><action label="Inline" id="inline" menubarPath="refactor/Open" class="com.eclipse.featdiag.refactor.Inline"></action><action label="Change Method Signature" id="changemethodsignature" menubarPath="refactor/Open" class="com.eclipse.featdiag.refactor.ChangeMethodSignature"></action><action label="Move" id="move" menubarPath="refactor/Open" class="com.eclipse.featdiag.refactor.Move"></action><action label="Rename" id="rename" menubarPath="refactor/Open" class="com.eclipse.featdiag.refactor.Rename">
+   	<action label="Extract Superclass" id="extractsuperclass" menubarPath="refactor/Open" class="com.eclipse.featdiag.refactor.ExtractSuperclass"></action><action label="Inline" id="inline" menubarPath="refactor/Open" class="com.eclipse.featdiag.refactor.ChangeMethodSignature"></action><action label="Change Method Signature" id="changemethodsignature" menubarPath="refactor/Open" class="com.eclipse.featdiag.refactor.ChangeMethodSignature"></action><action label="Move" id="move" menubarPath="refactor/Open" class="com.eclipse.featdiag.refactor.Move"></action><action label="Rename" id="rename" menubarPath="refactor/Open" class="com.eclipse.featdiag.refactor.ChangeMethodSignature">
    	</action>
    	</viewerContribution></extension>
 

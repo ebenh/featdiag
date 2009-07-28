@@ -64,7 +64,7 @@ public class OpenNewEditorAction implements IActionDelegate {
 				}
 			}
 			else{
-				// message box, can only diagram class types (not enums)
+				// The user selected a type which is not a class type e.g. enum
 			}
 		} 
 		catch (JavaModelException e) {

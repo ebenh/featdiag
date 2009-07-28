@@ -114,9 +114,8 @@ public class DiagramEditor extends GraphicalEditorWithFlyoutPalette implements I
 		
 		Control control = getGraphicalViewer().getControl();
 		Menu menu = menuMgr.createContextMenu(control);
-		
 		control.setMenu(menu);
-		
+	
 		// Set up listeners for file changes.
 //		IPath path = null;
 //		try {
@@ -132,9 +131,17 @@ public class DiagramEditor extends GraphicalEditorWithFlyoutPalette implements I
 //			file.getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.POST_BUILD);
 //		}
 		
-		System.out.println("Creating listener");
-		listener = new FileSaveListener(contents, null, null);
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.POST_BUILD);
+		//System.out.println("Creating listener");
+//		listener = new FileSaveListener(contents, null, null);
+//		ResourcesPlugin.getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.POST_BUILD);
+		
+		// update the contents of the diagram in case referenced files change
+//		DiagramPart contents2 = getContents();
+//		DiagramModel model = contents2.getDiagramModel();
+//		model.update();
+//	    getGraphicalViewer().setContents(model);
+//	    new ISOMLayout(model).autoArrange();
+//	    refresh();
 	}
 	
 	
@@ -221,7 +228,6 @@ public class DiagramEditor extends GraphicalEditorWithFlyoutPalette implements I
 				getActionRegistry().getAction(ActionFactory.UNDO.getId()));
 		handler.put(KeyStroke.getPressed((char) 25, 121, SWT.CTRL),
 				getActionRegistry().getAction(ActionFactory.REDO.getId()));
-
 		return handler;
 	}
 	
@@ -249,7 +255,24 @@ public class DiagramEditor extends GraphicalEditorWithFlyoutPalette implements I
 	    setFileName();
 	    doSave(new NullProgressMonitor());		
 	}
-	
+
+	public void autoArrange(){
+		DiagramPart contents = getContents();
+		final DiagramModel model = contents.getDiagramModel();
+
+		Display.getDefault().syncExec(new Runnable() {
+			public void run() {
+				new ISOMLayout(model).autoArrange();
+			}			
+		});		
+	}
+	public void update(){
+		DiagramPart contents = getContents();
+		DiagramModel model = contents.getDiagramModel();
+		model.update();
+		autoArrange();
+	    refresh();		
+	}
 	/**
 	 * Refreshes all edit parts in this editor.
 	 */
@@ -328,7 +351,7 @@ public class DiagramEditor extends GraphicalEditorWithFlyoutPalette implements I
 	 * @param part
 	 */
 	private void handleNewPart(IWorkbenchPart part) {
-		DiagramPart contents = getContents();			
+		DiagramPart contents = getContents();	
 		if (contents != null) {
 			DiagramModel model = contents.getDiagramModel();
 			String associatedFile = model.getAssociatedJavaFile();
@@ -336,7 +359,7 @@ public class DiagramEditor extends GraphicalEditorWithFlyoutPalette implements I
 			if (file != null) {
 				IFile classFile = FileUtils.getClassFile(file);
 				String classFileString = classFile.getFullPath().toString();
-				listener = new FileSaveListener(model, file, classFileString);
+				listener = new FileSaveListener(this, model, file, classFileString);
 				
 				file.getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.POST_BUILD);
 				javaFileOpen = true;

@@ -7,6 +7,7 @@ import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
 import com.eclipse.featdiag.models.DiagramModel;
@@ -19,9 +20,10 @@ import com.eclipse.featdiag.utils.FileUtils;
  *
  */
 public class FileSaveListener implements IResourceChangeListener, IResourceDeltaVisitor {
-	private String associatedClassFile;
-	private IFile javaFile;
+	//private String associatedClassFile;
+	//private IFile javaFile;
 	private DiagramModel diagram;
+	private DiagramEditor diagramEditor;
 	
 	/**
 	 * Creates a new listener for changes made to the given
@@ -31,15 +33,15 @@ public class FileSaveListener implements IResourceChangeListener, IResourceDelta
 	 * @param javaFile
 	 * @param associateJavaFile
 	 */
-	public FileSaveListener(DiagramModel diagram, IFile javaFile, String associateJavaFile) {
+	public FileSaveListener(DiagramEditor diagramEditor, DiagramModel diagram, IFile javaFile, String associateJavaFile) {
 		this.diagram = diagram;
-		this.javaFile = javaFile;
-		this.associatedClassFile = associateJavaFile;
+		this.diagramEditor = diagramEditor;
+		//this.javaFile = javaFile;
+		//this.associatedClassFile = associateJavaFile;
 	}
 
 	
 	public void resourceChanged(IResourceChangeEvent event) {
-		System.out.println("yy");
 	      if (event.getType() == IResourceChangeEvent.POST_BUILD) {
 			try {
 				event.getDelta().accept(this);
@@ -51,8 +53,8 @@ public class FileSaveListener implements IResourceChangeListener, IResourceDelta
 
 	
 	public boolean visit(IResourceDelta delta) throws CoreException {
-		System.out.println("xx");
-		delta = delta.findMember(new Path(associatedClassFile));
+		//delta = delta.findMember(new Path(associatedClassFile));
+		delta = delta.findMember(new Path(diagram.getAssociatedJavaFile()));
 		if (delta != null) {
 			IResource resource = delta.getResource();
 			if (resource.getType() == IResource.FILE &&
@@ -60,8 +62,10 @@ public class FileSaveListener implements IResourceChangeListener, IResourceDelta
 				 (delta.getFlags() & IResourceDelta.ENCODING) > 0)) {
 				
 				//FileUtils.updateDiagram((IFile) resource, diagram);
-				diagram.update();
-				diagram.doSave();
+				//diagram.update();
+				//diagramEditor.update();
+				//diagram.doSave();
+				//diagramEditor.doSave(new NullProgressMonitor());
 			}
 		}
 		
