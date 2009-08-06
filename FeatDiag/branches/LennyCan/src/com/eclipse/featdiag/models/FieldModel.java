@@ -45,7 +45,7 @@ public class FieldModel extends MemberModel {
 		this.field = field;
 		
 		try {
-			toStringName = Signature.toString(field.getTypeSignature()) + " " + field.getElementName();
+			toStringName = Signature.toString(field.getTypeSignature()) + " " + field.getDeclaringType().getElementName() + "." + field.getElementName();
 		} catch (JavaModelException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -121,5 +121,9 @@ public class FieldModel extends MemberModel {
 	
 	public IField getField(){
 		return field;
+	}
+	
+	public boolean exists(){
+		return field.exists();
 	}
 }

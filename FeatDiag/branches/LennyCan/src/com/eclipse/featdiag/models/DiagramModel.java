@@ -26,7 +26,6 @@ import org.eclipse.jdt.core.search.SearchPattern;
 import org.eclipse.jdt.core.search.SearchRequestor;
 
 import com.eclipse.featdiag.parser.Edge;
-import com.eclipse.featdiag.parser.meyers.ISOMLayout;
 import com.eclipse.featdiag.parts.DiagramPart;
 
 
@@ -453,5 +452,18 @@ public class DiagramModel extends BaseModel {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public boolean isConsistent(){
+		for(FieldModel field : fieldModels.values()){
+			if (!field.exists())
+				return false;
+		}
+		for(MethodModel method : methodModels.values()){
+			if (!method.exists())
+				return false;
+		}
+		
+		return true;
 	}
 }

@@ -30,6 +30,7 @@ import org.eclipse.gef.ui.parts.GraphicalViewerKeyHandler;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IEditorInput;
@@ -266,6 +267,7 @@ public class DiagramEditor extends GraphicalEditorWithFlyoutPalette implements I
 			}			
 		});		
 	}
+	
 	public void update(){
 		DiagramPart contents = getContents();
 		DiagramModel model = contents.getDiagramModel();
@@ -273,6 +275,14 @@ public class DiagramEditor extends GraphicalEditorWithFlyoutPalette implements I
 		autoArrange();
 	    refresh();		
 	}
+	
+	// note eben
+	public boolean isConsistent(){
+		DiagramPart contents = getContents();
+		DiagramModel model = contents.getDiagramModel();
+		return model.isConsistent();
+	}
+	
 	/**
 	 * Refreshes all edit parts in this editor.
 	 */
@@ -390,20 +400,31 @@ public class DiagramEditor extends GraphicalEditorWithFlyoutPalette implements I
 		if (!javaFileOpen) {
 			handleNewPart(part);
 		}
-	}
-
+	} 
 	
 	public void partActivated(IWorkbenchPart part) {
-		if (!javaFileOpen) {
-			handleNewPart(part);
+		System.out.println("partActivated" + part.getTitle());
+//		if (!javaFileOpen) {
+//			handleNewPart(part);
+//		}
+		/* Check if this diagram is consistent, i.e. all the fields and methods
+		 * it references still exist. If the diagram is inconsistent, regenerate
+		 * the diagram. 
+		 */
+		if(part == this && !isConsistent()){
+			System.out.println("Diagram is inconsistent");
+    		MessageDialog.openInformation(part.getSite().getShell(), 
+    				"Diagram is out of date", "One or more of the elements in this diagram no longer exist. This diagram needs to be updated.");
+    		update();
 		}
 	}
 	
 	
 	public void partClosed(IWorkbenchPart part) {
-		if (javaFileOpen) {
-			handlePartClosed(part);
-		}
+//		if (javaFileOpen) {
+//			handlePartClosed(part);
+//		}
+		System.out.println("partClosed " + part.getTitle());
 	}
 
 	

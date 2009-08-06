@@ -142,4 +142,8 @@ public class MethodModel extends MemberModel {
 		return method;
 	}
 	// end serialization stuff
+	
+	public boolean exists(){
+		return method.exists();
+	}
 }
