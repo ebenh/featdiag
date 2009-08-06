@@ -63,8 +63,8 @@ import org.eclipse.gef.MouseWheelZoomHandler;
  */
 
 public class DiagramEditor extends GraphicalEditorWithFlyoutPalette implements IPartListener {
-	private boolean javaFileOpen = false;
-	private FileSaveListener listener;
+//	private boolean javaFileOpen = false;
+//	private FileSaveListener listener;
 	private PaletteViewer paletteViwer;
 	
 	/**
@@ -84,9 +84,9 @@ public class DiagramEditor extends GraphicalEditorWithFlyoutPalette implements I
 	
 	public void dispose() {
 		getSite().getPage().removePartListener(this);
-		if (listener != null) {
-			listener.dispose();
-		}
+//		if (listener != null) {
+//			listener.dispose();
+//		}
 		super.dispose();
 	}
 	
@@ -243,21 +243,22 @@ public class DiagramEditor extends GraphicalEditorWithFlyoutPalette implements I
 		DiagramModel model = contents.getDiagramModel();
 		model.addMembers(classType);
 		// note eben
-		try {
-			model.setAssociatedJavaFile(classType.getCompilationUnit().getUnderlyingResource().getFullPath().toString());
-		} catch (JavaModelException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		try {
+//			model.setAssociatedJavaFile(classType.getCompilationUnit().getUnderlyingResource().getFullPath().toString());
+//		} catch (JavaModelException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		
-	    getGraphicalViewer().setContents(model);
+//	    getGraphicalViewer().setContents(model);
 	    new ISOMLayout(model).autoArrange();
+	    autoArrange();
 	    refresh();
 	    setFileName();
 	    doSave(new NullProgressMonitor());		
 	}
 
-	public void autoArrange(){
+	private void autoArrange(){
 		DiagramPart contents = getContents();
 		final DiagramModel model = contents.getDiagramModel();
 
@@ -272,8 +273,8 @@ public class DiagramEditor extends GraphicalEditorWithFlyoutPalette implements I
 		DiagramPart contents = getContents();
 		DiagramModel model = contents.getDiagramModel();
 		model.update();
-		autoArrange();
-	    refresh();		
+	    refresh();
+	    doSave(new NullProgressMonitor());
 	}
 	
 	// note eben
@@ -338,21 +339,21 @@ public class DiagramEditor extends GraphicalEditorWithFlyoutPalette implements I
 	 * @param associatedFile
 	 * @return
 	 */
-	private IFile getFile(IWorkbenchPart part, String associatedFile)	{
-		if (part instanceof EditorPart) {
-			IEditorInput input = ((EditorPart) part).getEditorInput();
-			if (input instanceof FileEditorInput) {
-				IFile file = ((FileEditorInput) input).getFile();
-				if (file != null) {
-					if (file.getFullPath().toString().equals(associatedFile)) {
-						return file;
-					}
-				}
-			}
-		}
-		
-		return null;
-	}
+//	private IFile getFile(IWorkbenchPart part, String associatedFile)	{
+//		if (part instanceof EditorPart) {
+//			IEditorInput input = ((EditorPart) part).getEditorInput();
+//			if (input instanceof FileEditorInput) {
+//				IFile file = ((FileEditorInput) input).getFile();
+//				if (file != null) {
+//					if (file.getFullPath().toString().equals(associatedFile)) {
+//						return file;
+//					}
+//				}
+//			}
+//		}
+//		
+//		return null;
+//	}
 		
 	/**
 	 * Check if the recently opened/activated part is the
@@ -360,22 +361,22 @@ public class DiagramEditor extends GraphicalEditorWithFlyoutPalette implements I
 	 * add this as as listener for changes.
 	 * @param part
 	 */
-	private void handleNewPart(IWorkbenchPart part) {
-		DiagramPart contents = getContents();	
-		if (contents != null) {
-			DiagramModel model = contents.getDiagramModel();
-			String associatedFile = model.getAssociatedJavaFile();
-			IFile file = getFile(part, associatedFile);
-			if (file != null) {
-				IFile classFile = FileUtils.getClassFile(file);
-				String classFileString = classFile.getFullPath().toString();
-				listener = new FileSaveListener(this, model, file, classFileString);
-				
-				file.getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.POST_BUILD);
-				javaFileOpen = true;
-			}
-		}
-	}
+//	private void handleNewPart(IWorkbenchPart part) {
+//		DiagramPart contents = getContents();	
+//		if (contents != null) {
+//			DiagramModel model = contents.getDiagramModel();
+//			String associatedFile = model.getAssociatedJavaFile();
+//			IFile file = getFile(part, associatedFile);
+//			if (file != null) {
+//				IFile classFile = FileUtils.getClassFile(file);
+//				String classFileString = classFile.getFullPath().toString();
+//				listener = new FileSaveListener(this, model, file, classFileString);
+//				
+//				file.getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.POST_BUILD);
+//				javaFileOpen = true;
+//			}
+//		}
+//	}
 	
 	/**
 	 * Check if the recently closed part is the java
@@ -383,27 +384,27 @@ public class DiagramEditor extends GraphicalEditorWithFlyoutPalette implements I
 	 * remove this as a listener for changes.
 	 * @param part
 	 */
-	private void handlePartClosed(IWorkbenchPart part) {
-		DiagramPart contents = getContents();			
-		if (contents != null) {
-			String associatedFile = contents.getDiagramModel().getAssociatedJavaFile();
-			IFile file = getFile(part, associatedFile);
-			if (file != null) {
-				file.getWorkspace().removeResourceChangeListener(listener);
-				javaFileOpen = false;
-			}
-		}
-	}
+//	private void handlePartClosed(IWorkbenchPart part) {
+//		DiagramPart contents = getContents();			
+//		if (contents != null) {
+//			String associatedFile = contents.getDiagramModel().getAssociatedJavaFile();
+//			IFile file = getFile(part, associatedFile);
+//			if (file != null) {
+//				file.getWorkspace().removeResourceChangeListener(listener);
+//				javaFileOpen = false;
+//			}
+//		}
+//	}
 	
 	
 	public void partOpened(IWorkbenchPart part) {
-		if (!javaFileOpen) {
-			handleNewPart(part);
-		}
+//		if (!javaFileOpen) {
+//			handleNewPart(part);
+//		}
 	} 
 	
 	public void partActivated(IWorkbenchPart part) {
-		System.out.println("partActivated" + part.getTitle());
+//		System.out.println("partActivated" + part.getTitle());
 //		if (!javaFileOpen) {
 //			handleNewPart(part);
 //		}
@@ -424,7 +425,7 @@ public class DiagramEditor extends GraphicalEditorWithFlyoutPalette implements I
 //		if (javaFileOpen) {
 //			handlePartClosed(part);
 //		}
-		System.out.println("partClosed " + part.getTitle());
+//		System.out.println("partClosed " + part.getTitle());
 	}
 
 	

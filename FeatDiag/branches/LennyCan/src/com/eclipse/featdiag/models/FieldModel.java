@@ -88,7 +88,8 @@ public class FieldModel extends MemberModel {
 	}
 	
 	public String getName() {
-		return field.getElementName();
+		//return field.getElementName();
+		return toString();
 	}
 	
 	public int getModifiers() {

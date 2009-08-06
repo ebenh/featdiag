@@ -171,7 +171,7 @@ public class DiagramPart extends BasePart {
 			objectOut.writeObject(model);
 			objectOut.close();
 			
-			if (featFile != null) {
+			if (featFile != null && featFile.exists()) {			
 				featFile.setContents(new ByteArrayInputStream(out.toByteArray()), true, 
 						false, monitor);
 			}

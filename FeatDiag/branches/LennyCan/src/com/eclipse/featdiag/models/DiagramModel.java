@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -39,7 +40,7 @@ public class DiagramModel extends BaseModel {
 	
     private static final long serialVersionUID = -3494446264060426555L;
     
-    private String associatedJavaFile;
+//    private String associatedJavaFile;
 
     private PaletteModel palette;
     private Map<String, FieldModel> fieldModels;
@@ -66,18 +67,18 @@ public class DiagramModel extends BaseModel {
 	 * this diagram in path from project form.
 	 * @param javaFile
 	 */
-	public void setAssociatedJavaFile(String javaFile) {
-		this.associatedJavaFile = javaFile;
-	}
+//	public void setAssociatedJavaFile(String javaFile) {
+//		this.associatedJavaFile = javaFile;
+//	}
 	
 	/**
 	 * Returns the name of the java file associated
 	 * with this diagram in path from project form.
 	 * @return
 	 */
-	public String getAssociatedJavaFile() {
-		return associatedJavaFile;
-	}
+//	public String getAssociatedJavaFile() {
+//		return associatedJavaFile;
+//	}
 	
 	/**
 	 * Returns the palette model in this diagram.
@@ -351,7 +352,6 @@ public class DiagramModel extends BaseModel {
 	 * Saves this diagram to the .feat file.
 	 */
 	public void doSave() {
-		System.out.println("DO SAVE");
 		firePropertyChange(SAVE, null, null);
 	}
 
@@ -378,48 +378,88 @@ public class DiagramModel extends BaseModel {
 	}
 	// end serialization stuff
 	
+//	public void update(){
+//		if(classType == null)
+//			return;
+//		
+//		connectionModels.clear();
+//		
+//		for(FieldModel field : fieldModels.values()){
+//			removeConnections(field);
+//			firePropertyChange(CHILD, field, null);
+//		}
+//		fieldModels.clear();
+//
+//		for(MethodModel method : methodModels.values()){
+//			removeConnections(method);
+//			firePropertyChange(CHILD, method, null);
+//		}
+//		methodModels.clear();
+//
+//		addMembers();
+//	}
 	public void update(){
 		if(classType == null)
 			return;
 		
-		connectionModels.clear();
+		for(Iterator<FieldModel> iter = fieldModels.values().iterator(); iter.hasNext();){
+			FieldModel fieldModel = iter.next();
+			if(!fieldModel.exists()){
+				removeConnections(fieldModel);
+				iter.remove();
+				firePropertyChange(CHILD, fieldModel, null);
+			}
+		}
+
+		for(Iterator<MethodModel> iter = methodModels.values().iterator(); iter.hasNext();){
+			MethodModel methodModel = iter.next();
+			if(!methodModel.exists()){
+				removeConnections(methodModel);
+				iter.remove();
+				firePropertyChange(CHILD, methodModel, null);
+			}
+		}
 		
-		for(FieldModel field : fieldModels.values()){
-			removeConnections(field);
-			firePropertyChange(CHILD, field, null);
-		}
-		fieldModels.clear();
-
-		for(MethodModel method : methodModels.values()){
-			removeConnections(method);
-			firePropertyChange(CHILD, method, null);
-		}
-		methodModels.clear();
-
 		addMembers();
+		addEdges();
 	}
 	
 	public void addMembers(IType classType){
 		this.classType = classType;	
 		addMembers();
+		addEdges();
 	}
 	
 	protected void addMembers(){
 		try {
-			for(IMethod method : classType.getMethods()){
-				addMethodModel(new MethodModel(method));
-				findReferences(method);
-			}
-			
 			for(IField field : classType.getFields()){
 				addFieldModel(new FieldModel(field));
-				findReferences(field);
-			}			
+			}
+			
+			for(IMethod method : classType.getMethods()){
+				addMethodModel(new MethodModel(method));
+			}
 		} 
 		catch (JavaModelException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}	
+	}
+	
+	protected void addEdges(){
+		try {				
+			for(IField field : classType.getFields()){
+				findReferences(field);
+			}
+			
+			for(IMethod method : classType.getMethods()){
+				findReferences(method);
+			}
+		} 
+		catch (JavaModelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	protected void findReferences(final IJavaElement javaElement){
@@ -433,12 +473,14 @@ public class DiagramModel extends BaseModel {
 			public void acceptSearchMatch(SearchMatch match) {
 				if(((IJavaElement)match.getElement()).getElementType() == IJavaElement.METHOD){
 					IMethod foundMethod = (IMethod) match.getElement();
-					addMethodModel(new MethodModel(foundMethod));
+					//addMethodModel(new MethodModel(foundMethod));
 				
 					if (javaElement.getElementType() == IJavaElement.FIELD) {
-						addMethodToFieldConnection(foundMethod.getElementName(), javaElement.getElementName());
+						//addMethodToFieldConnection(foundMethod.getElementName(), javaElement.getElementName());
+						addMethodToFieldConnection(new MethodModel(foundMethod).toString(), new FieldModel((IField)javaElement).toString());
 					} else if (javaElement.getElementType() == IJavaElement.METHOD) {
-						addMethodToMethodConnection(foundMethod.getElementName(), javaElement.getElementName());
+						//addMethodToMethodConnection(foundMethod.getElementName(), javaElement.getElementName());
+						addMethodToMethodConnection(new MethodModel(foundMethod).toString(), new MethodModel((IMethod)javaElement).toString());
 					} else {
 						assert false;
 					}

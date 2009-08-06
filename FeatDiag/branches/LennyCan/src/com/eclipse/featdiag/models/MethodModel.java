@@ -108,7 +108,8 @@ public class MethodModel extends MemberModel {
 	}
 	
 	public String getName() {
-		return method.getElementName();
+		//return method.getElementName();
+		return toString();
 	}
 	
 	public int getModifiers() {

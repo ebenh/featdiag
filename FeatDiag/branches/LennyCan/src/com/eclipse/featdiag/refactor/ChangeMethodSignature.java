@@ -73,7 +73,6 @@ public class ChangeMethodSignature implements IEditorActionDelegate {
 			if(RefactoringAvailabilityTester.isChangeSignatureAvailable(selection)){
 				ra.run(selection);
 				((DiagramEditor)graphicalViewer).update();
-				((DiagramEditor)graphicalViewer).doSave(new NullProgressMonitor());
 			}else{
 	    		MessageDialog.openInformation(graphicalViewer.getSite().getShell(), 
 	    				"Operation Not Applicable", "This operation can be performed on this method.");
@@ -94,7 +93,6 @@ public class ChangeMethodSignature implements IEditorActionDelegate {
 			if(RefactoringAvailabilityTester.isSelfEncapsulateAvailable(selection)){
 				ra.run(selection);
 				((DiagramEditor)graphicalViewer).update();
-				((DiagramEditor)graphicalViewer).doSave(new NullProgressMonitor());
 			}else{
 	    		MessageDialog.openInformation(graphicalViewer.getSite().getShell(), 
 	    				"Operation Not Applicable", "This operation can be performed on this field.");
@@ -115,7 +113,6 @@ public class ChangeMethodSignature implements IEditorActionDelegate {
 			if(RefactoringAvailabilityTester.isInlineConstantAvailable(selection)){
 				ra.run(selection);
 				((DiagramEditor)graphicalViewer).update();
-				((DiagramEditor)graphicalViewer).doSave(new NullProgressMonitor());
 			}else{
 	    		MessageDialog.openInformation(graphicalViewer.getSite().getShell(), 
 	    				"Operation Not Applicable", "This operation can be performed on this field.");
@@ -126,7 +123,6 @@ public class ChangeMethodSignature implements IEditorActionDelegate {
 	    	if(RefactoringAvailabilityTester.isInlineMethodAvailable(selection)){
 	    		ra.run(selection);
 	    		((DiagramEditor)graphicalViewer).update();
-	    		((DiagramEditor)graphicalViewer).doSave(new NullProgressMonitor());
 	    	}else{
 	    		MessageDialog.openInformation(graphicalViewer.getSite().getShell(), 
 	    				"Operation Not Applicable", "This operation can be performed on this method.");
@@ -146,7 +142,6 @@ public class ChangeMethodSignature implements IEditorActionDelegate {
 	        if(RefactoringAvailabilityTester.isRenameFieldAvailable(field)){
 	        	ra.run(new StructuredSelection(field));
 	        	((DiagramEditor)graphicalViewer).update();
-    			((DiagramEditor)graphicalViewer).doSave(new NullProgressMonitor());
 	        }else{
 	    		MessageDialog.openInformation(graphicalViewer.getSite().getShell(), 
 	    				"Operation Not Applicable", "This operation can be performed on this field.");
@@ -157,7 +152,6 @@ public class ChangeMethodSignature implements IEditorActionDelegate {
 	        if(RefactoringAvailabilityTester.isRenameAvailable(method)){
 	        	ra.run(new StructuredSelection(method));
 	        	((DiagramEditor)graphicalViewer).update();
-    			((DiagramEditor)graphicalViewer).doSave(new NullProgressMonitor());
 	        }else{
 	    		MessageDialog.openInformation(graphicalViewer.getSite().getShell(), 
 	    				"Operation Not Applicable", "This operation can be performed on this method.");

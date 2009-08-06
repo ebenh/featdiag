@@ -54,7 +54,7 @@ public class FileSaveListener implements IResourceChangeListener, IResourceDelta
 	
 	public boolean visit(IResourceDelta delta) throws CoreException {
 		//delta = delta.findMember(new Path(associatedClassFile));
-		delta = delta.findMember(new Path(diagram.getAssociatedJavaFile()));
+		//delta = delta.findMember(new Path(diagram.getAssociatedJavaFile()));
 		if (delta != null) {
 			IResource resource = delta.getResource();
 			if (resource.getType() == IResource.FILE &&
