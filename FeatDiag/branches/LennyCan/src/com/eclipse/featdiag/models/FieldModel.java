@@ -45,7 +45,9 @@ public class FieldModel extends MemberModel {
 		this.field = field;
 		
 		try {
-			toStringName = Signature.toString(field.getTypeSignature()) + " " + field.getDeclaringType().getElementName() + "." + field.getElementName();
+			String pkg = field.getDeclaringType().getPackageFragment().getElementName();
+			pkg = (pkg.equals("")?pkg:pkg+".");
+			toStringName = Signature.toString(field.getTypeSignature()) + " " + pkg + field.getDeclaringType().getElementName() + "." + field.getElementName();
 		} catch (JavaModelException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

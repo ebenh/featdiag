@@ -272,7 +272,11 @@ public class DiagramEditor extends GraphicalEditorWithFlyoutPalette implements I
 	public void update(){
 		DiagramPart contents = getContents();
 		DiagramModel model = contents.getDiagramModel();
-		model.update();
+		boolean ret = model.update();
+		if(ret == false){
+    		MessageDialog.openInformation(getSite().getShell(), 
+    				"Error", "Class does not exist.");
+		}
 	    refresh();
 	    doSave(new NullProgressMonitor());
 	}
@@ -413,7 +417,7 @@ public class DiagramEditor extends GraphicalEditorWithFlyoutPalette implements I
 		 * the diagram. 
 		 */
 		if(part == this && !isConsistent()){
-    		MessageDialog.openInformation(part.getSite().getShell(), 
+    		MessageDialog.openInformation(getSite().getShell(), 
     				"Diagram is out of date", "One or more of the elements in this diagram no longer exist. This diagram needs to be updated.");
     		update();
 		}

@@ -41,8 +41,11 @@ public class MethodModel extends MemberModel {
 		super();
 		this.method = method;
 		
+		String pkg = method.getDeclaringType().getPackageFragment().getElementName();
+		pkg = (pkg.equals("")?pkg:pkg+".");
+		
 		String methodSignature = "";
-		String methodName = method.getDeclaringType().getElementName() + "." + method.getElementName();
+		String methodName = pkg + method.getDeclaringType().getElementName() + "." + method.getElementName();
 		String[] parameterNames = {};
 		
 		try {
@@ -52,7 +55,7 @@ public class MethodModel extends MemberModel {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+				
 		toStringName = Signature.toString(methodSignature, methodName, parameterNames, true, true);
 	}
 			

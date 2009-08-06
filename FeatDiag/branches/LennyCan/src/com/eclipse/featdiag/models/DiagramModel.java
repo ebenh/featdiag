@@ -398,14 +398,17 @@ public class DiagramModel extends BaseModel {
 //
 //		addMembers();
 //	}
-	public void update(){
-		if(classType == null)
-			return;
+	public boolean update(){
+		if(classType == null || !classType.exists()){
+			clear();
+			return false;
+		}
 		
 		for(Iterator<FieldModel> iter = fieldModels.values().iterator(); iter.hasNext();){
 			FieldModel fieldModel = iter.next();
 			if(!fieldModel.exists()){
 				removeConnections(fieldModel);
+				getPaletteModel().removeField(fieldModel);
 				iter.remove();
 				firePropertyChange(CHILD, fieldModel, null);
 			}
@@ -415,29 +418,39 @@ public class DiagramModel extends BaseModel {
 			MethodModel methodModel = iter.next();
 			if(!methodModel.exists()){
 				removeConnections(methodModel);
+				getPaletteModel().removeMethod(methodModel);
 				iter.remove();
 				firePropertyChange(CHILD, methodModel, null);
 			}
 		}
 		
 		addMembers();
-		addEdges();
+		//addEdges();
+		return true;
 	}
 	
 	public void addMembers(IType classType){
 		this.classType = classType;	
+		
+//		clear();
+//		
+//		if(!classType.exists())
+//			return;
+		
 		addMembers();
-		addEdges();
+		//addEdges();
 	}
 	
 	protected void addMembers(){
 		try {
 			for(IField field : classType.getFields()){
 				addFieldModel(new FieldModel(field));
+				findReferences(field);
 			}
 			
 			for(IMethod method : classType.getMethods()){
 				addMethodModel(new MethodModel(method));
+				findReferences(method);
 			}
 		} 
 		catch (JavaModelException e) {
@@ -446,21 +459,21 @@ public class DiagramModel extends BaseModel {
 		}	
 	}
 	
-	protected void addEdges(){
-		try {				
-			for(IField field : classType.getFields()){
-				findReferences(field);
-			}
-			
-			for(IMethod method : classType.getMethods()){
-				findReferences(method);
-			}
-		} 
-		catch (JavaModelException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+//	protected void addEdges(){
+//		try {				
+//			for(IField field : classType.getFields()){
+//				
+//			}
+//			
+//			for(IMethod method : classType.getMethods()){
+//				findReferences(method);
+//			}
+//		} 
+//		catch (JavaModelException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//	}
 
 	protected void findReferences(final IJavaElement javaElement){
 		assert javaElement instanceof IField;
@@ -473,7 +486,9 @@ public class DiagramModel extends BaseModel {
 			public void acceptSearchMatch(SearchMatch match) {
 				if(((IJavaElement)match.getElement()).getElementType() == IJavaElement.METHOD){
 					IMethod foundMethod = (IMethod) match.getElement();
-					//addMethodModel(new MethodModel(foundMethod));
+					
+					// Add this method to the diagram, it might be part of a different class
+					addMethodModel(new MethodModel(foundMethod));
 				
 					if (javaElement.getElementType() == IJavaElement.FIELD) {
 						//addMethodToFieldConnection(foundMethod.getElementName(), javaElement.getElementName());
@@ -507,5 +522,25 @@ public class DiagramModel extends BaseModel {
 		}
 		
 		return true;
+	}
+	
+	protected void clear(){	
+		for(Iterator<FieldModel> iter = fieldModels.values().iterator(); iter.hasNext();){
+			FieldModel fieldModel = iter.next();
+			removeConnections(fieldModel);
+			getPaletteModel().removeField(fieldModel);
+			iter.remove();
+			firePropertyChange(CHILD, fieldModel, null);
+		}
+
+		for(Iterator<MethodModel> iter = methodModels.values().iterator(); iter.hasNext();){
+			MethodModel methodModel = iter.next();
+			removeConnections(methodModel);
+			getPaletteModel().removeMethod(methodModel);
+			iter.remove();
+			firePropertyChange(CHILD, methodModel, null);
+		}
+		
+		classType = null;
 	}
 }
