@@ -413,7 +413,6 @@ public class DiagramEditor extends GraphicalEditorWithFlyoutPalette implements I
 		 * the diagram. 
 		 */
 		if(part == this && !isConsistent()){
-			System.out.println("Diagram is inconsistent");
     		MessageDialog.openInformation(part.getSite().getShell(), 
     				"Diagram is out of date", "One or more of the elements in this diagram no longer exist. This diagram needs to be updated.");
     		update();
