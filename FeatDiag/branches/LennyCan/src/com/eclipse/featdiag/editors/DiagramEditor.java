@@ -258,7 +258,7 @@ public class DiagramEditor extends GraphicalEditorWithFlyoutPalette implements I
 	    doSave(new NullProgressMonitor());		
 	}
 
-	private void autoArrange(){
+	public void autoArrange(){
 		DiagramPart contents = getContents();
 		final DiagramModel model = contents.getDiagramModel();
 

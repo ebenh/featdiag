@@ -44,6 +44,10 @@ public class ChangeMethodSignature implements IEditorActionDelegate {
 				inline();
 			}else if(action.getId().equals("rename")){
 				rename();
+			}else if(action.getId().equals("autoArrange")){
+				autoArrange();
+			}else if(action.getId().equals("updateDiagram")){
+				updateDiagram();
 			}else{
 				assert false;
 			}
@@ -159,5 +163,13 @@ public class ChangeMethodSignature implements IEditorActionDelegate {
 		}else{
 			assert false;
 		}
+	}
+	
+	private void autoArrange(){
+		((DiagramEditor)graphicalViewer).autoArrange();
+	}
+	
+	private void updateDiagram(){
+		((DiagramEditor)graphicalViewer).update();
 	}
 }
