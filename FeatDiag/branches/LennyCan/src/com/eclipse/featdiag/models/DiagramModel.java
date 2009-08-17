@@ -40,8 +40,6 @@ public class DiagramModel extends BaseModel {
 	
     private static final long serialVersionUID = -3494446264060426555L;
     
-//    private String associatedJavaFile;
-
     private PaletteModel palette;
     private Map<String, FieldModel> fieldModels;
 	private Map<String, MethodModel> methodModels;
@@ -61,25 +59,7 @@ public class DiagramModel extends BaseModel {
 		methodModels = new HashMap <String, MethodModel>();
 		connectionModels = new Vector<ConnectionModel>();
 	}
-	
-	/**
-	 * Store the name of the java file associated with
-	 * this diagram in path from project form.
-	 * @param javaFile
-	 */
-//	public void setAssociatedJavaFile(String javaFile) {
-//		this.associatedJavaFile = javaFile;
-//	}
-	
-	/**
-	 * Returns the name of the java file associated
-	 * with this diagram in path from project form.
-	 * @return
-	 */
-//	public String getAssociatedJavaFile() {
-//		return associatedJavaFile;
-//	}
-	
+		
 	/**
 	 * Returns the palette model in this diagram.
 	 * @return
@@ -378,26 +358,6 @@ public class DiagramModel extends BaseModel {
 	}
 	// end serialization stuff
 	
-//	public void update(){
-//		if(classType == null)
-//			return;
-//		
-//		connectionModels.clear();
-//		
-//		for(FieldModel field : fieldModels.values()){
-//			removeConnections(field);
-//			firePropertyChange(CHILD, field, null);
-//		}
-//		fieldModels.clear();
-//
-//		for(MethodModel method : methodModels.values()){
-//			removeConnections(method);
-//			firePropertyChange(CHILD, method, null);
-//		}
-//		methodModels.clear();
-//
-//		addMembers();
-//	}
 	public boolean update(){
 		if(classType == null || !classType.exists()){
 			clear();
@@ -430,15 +390,8 @@ public class DiagramModel extends BaseModel {
 	}
 	
 	public void addMembers(IType classType){
-		this.classType = classType;	
-		
-//		clear();
-//		
-//		if(!classType.exists())
-//			return;
-		
+		this.classType = classType;			
 		addMembers();
-		//addEdges();
 	}
 	
 	protected void addMembers(){
@@ -458,22 +411,6 @@ public class DiagramModel extends BaseModel {
 			e.printStackTrace();
 		}	
 	}
-	
-//	protected void addEdges(){
-//		try {				
-//			for(IField field : classType.getFields()){
-//				
-//			}
-//			
-//			for(IMethod method : classType.getMethods()){
-//				findReferences(method);
-//			}
-//		} 
-//		catch (JavaModelException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//	}
 
 	protected void findReferences(final IJavaElement javaElement){
 		assert javaElement instanceof IField;
