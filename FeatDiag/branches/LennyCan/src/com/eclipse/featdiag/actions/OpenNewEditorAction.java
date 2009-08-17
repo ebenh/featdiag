@@ -24,9 +24,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 
 import com.eclipse.featdiag.editors.DiagramEditor;
-//import com.eclipse.featdiag.editors.FileSaveListener;
-//import com.eclipse.featdiag.utils.FileUtils;
-
 
 /**
  * Action to open the feature diagram associated with the
@@ -43,7 +40,6 @@ public class OpenNewEditorAction implements IActionDelegate {
 	 */
 	public void run(IAction action) {
 		try {			
-			//note eben
 			if (selection.isClass())
 			{
 				IType classType = selection;
@@ -74,20 +70,6 @@ public class OpenNewEditorAction implements IActionDelegate {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-//		// Set up a listener for file changes.
-//		IPath filePath = null;
-//		try {
-//			filePath = editor.getFilePath();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		if (filePath != null) {
-//			IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(filePath);
-//			FileSaveListener listener = editor.setListener(file);
-//			file.getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.POST_BUILD);
-//		}
 	}
 	
 	/**
