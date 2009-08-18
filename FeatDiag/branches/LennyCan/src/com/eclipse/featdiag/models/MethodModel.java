@@ -109,7 +109,6 @@ public class MethodModel extends MemberModel {
 	public IMethod getMethod(){
 		return method.getMember();
 	}
-	// end serialization stuff
 	
 	public boolean exists(){
 		return method.getMember().exists();
