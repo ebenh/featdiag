@@ -185,7 +185,5 @@ public abstract class MemberModel extends BaseModel implements Comparable<Member
 	
 	public abstract int getModifiers();
 	
-	public abstract String getClassName();
-	
 	public abstract boolean exists();
 }

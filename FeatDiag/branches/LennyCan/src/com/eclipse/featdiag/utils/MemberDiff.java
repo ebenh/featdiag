@@ -59,22 +59,22 @@ public class MemberDiff<Type extends Comparable<? super Type>> {
     		if (memberBase instanceof MethodModel &&
         			((MemberModel) memberBase).getName().equals(
         					((MemberModel) memberMod).getName())) {
-    			String[] baseArgTypes = ((MethodModel) memberBase).getArgTypeNames();
-    			String[] modArgTypes = ((MethodModel) memberMod).getArgTypeNames();
-    			if (baseArgTypes.length != modArgTypes.length) {
-    				removed.add(memberBase);
-        			added.add(memberMod);
-        			
-    			} else {
-	    			for (int i = 0; i < baseArgTypes.length; i ++){
-	    				if (! baseArgTypes[i].equals(modArgTypes[i])) {
-		    				removed.add(memberBase);
-		        			added.add(memberMod);
-		        			break;
-	    				}
-	    				
-	    			}
-    			}
+//    			String[] baseArgTypes = ((MethodModel) memberBase).getArgTypeNames();
+//    			String[] modArgTypes = ((MethodModel) memberMod).getArgTypeNames();
+//    			if (baseArgTypes.length != modArgTypes.length) {
+//    				removed.add(memberBase);
+//        			added.add(memberMod);
+//        			
+//    			} else {
+//	    			for (int i = 0; i < baseArgTypes.length; i ++){
+//	    				if (! baseArgTypes[i].equals(modArgTypes[i])) {
+//		    				removed.add(memberBase);
+//		        			added.add(memberMod);
+//		        			break;
+//	    				}
+//	    				
+//	    			}
+//    			}
         			
         	}
     	}

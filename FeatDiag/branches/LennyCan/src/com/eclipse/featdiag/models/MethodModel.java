@@ -1,19 +1,15 @@
 package com.eclipse.featdiag.models;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.gef.EditPart;
 import org.eclipse.jdt.core.IMethod;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
 
 import com.eclipse.featdiag.commands.MemberAddCommand;
 import com.eclipse.featdiag.commands.MethodAddCommand;
 import com.eclipse.featdiag.parts.MethodPart;
+import com.eclipse.featdiag.utils.MemberWrapper;
 
 
 /**
@@ -26,10 +22,10 @@ public class MethodModel extends MemberModel {
 
     private static final long serialVersionUID = -7662632863314325089L;
 
-    transient IMethod method;
-    private String iTypeHandleIdentifier; // used for serialization
-	
-    String toStringName;
+    private MemberWrapper<IMethod> method;
+    private String methodSignature;
+    private int flags;
+    
     /**
 	 * Create a new method model with the given name, 
 	 * and the given modifiers.
@@ -39,15 +35,21 @@ public class MethodModel extends MemberModel {
 	 */	
 	public MethodModel(IMethod method){
 		super();
-		this.method = method;
+		this.method = new MemberWrapper<IMethod>(method);
+				
+		/************************/
+		/* Get method signature */
+		/************************/
 		
-		String pkg = method.getDeclaringType().getPackageFragment().getElementName();
-		pkg = (pkg.equals("")?pkg:pkg+".");
+		/* Get package name */
+		String packageName = method.getDeclaringType().getPackageFragment().getElementName();
+		packageName = (packageName.equals("")?packageName:packageName+".");
 		
-		String methodSignature = "";
-		String methodName = pkg + method.getDeclaringType().getElementName() + "." + method.getElementName();
+		/* Get fully qualified method name */
+		String methodName = packageName + method.getDeclaringType().getElementName() + "." + method.getElementName();
+		
+		/* Get complete human readable method signature as a string */
 		String[] parameterNames = {};
-		
 		try {
 			methodSignature = method.getSignature();
 			parameterNames = method.getParameterNames();
@@ -56,7 +58,19 @@ public class MethodModel extends MemberModel {
 			e.printStackTrace();
 		}
 				
-		toStringName = Signature.toString(methodSignature, methodName, parameterNames, true, true);
+		methodSignature = Signature.toString(methodSignature, methodName, parameterNames, true, true);
+		
+		/********************/
+		/* Get access flags */
+		/********************/
+		
+		try {
+			flags = method.getFlags();
+		} catch (JavaModelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 			
 	/**
@@ -81,73 +95,23 @@ public class MethodModel extends MemberModel {
 	 */
 	
 	public String toString() {			
-//			String methodSignature = "";
-//			String methodName = method.getDeclaringType().getElementName() + "." + method.getElementName();
-//			String[] parameterNames = {};
-//			
-//			try {
-//				methodSignature = method.getSignature();
-//				parameterNames = method.getParameterNames();
-//			} catch (JavaModelException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//			
-//			return Signature.toString(methodSignature, methodName, parameterNames, true, true);
-		return toStringName;
-	}
-	
-	public String[] getArgTypeNames() {
-		String[] ret = {};
-		
-		try {
-			ret = method.getParameterNames();
-		} catch (JavaModelException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return ret;
+		return methodSignature;
 	}
 	
 	public String getName() {
-		//return method.getElementName();
 		return toString();
 	}
 	
 	public int getModifiers() {
-		int flags = 0;
-		try {
-			flags = method.getFlags();
-		} catch (JavaModelException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		return flags;
 	}
-	
-	public String getClassName() {
-		return method.getDeclaringType().getElementName();
-	}
-	
-	// serialization stuff
-	private void writeObject(ObjectOutputStream out) throws IOException {
-		iTypeHandleIdentifier = method.getHandleIdentifier();
-		out.defaultWriteObject();
-	}
-
-	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-		// our "pseudo-constructor"
-		in.defaultReadObject();
-		method = (IMethod) JavaCore.create(iTypeHandleIdentifier);
-	}
-	
+		
 	public IMethod getMethod(){
-		return method;
+		return method.getMember();
 	}
 	// end serialization stuff
 	
 	public boolean exists(){
-		return method.exists();
+		return method.getMember().exists();
 	}
 }

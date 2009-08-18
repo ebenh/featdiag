@@ -29,7 +29,7 @@ public class FileUtils {
 		String classFilePath = path.toString();
 		
 		Parser parser = new Parser(classFilePath);
-		parser.updateMembers(diagram);
+		//parser.updateMembers(diagram);
 	}
 	
 	/**

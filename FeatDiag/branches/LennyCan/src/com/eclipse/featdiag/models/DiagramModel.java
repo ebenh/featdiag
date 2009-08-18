@@ -1,8 +1,5 @@
 package com.eclipse.featdiag.models;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -16,7 +13,6 @@ import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.search.IJavaSearchConstants;
 import org.eclipse.jdt.core.search.IJavaSearchScope;
@@ -28,6 +24,7 @@ import org.eclipse.jdt.core.search.SearchRequestor;
 
 import com.eclipse.featdiag.parser.Edge;
 import com.eclipse.featdiag.parts.DiagramPart;
+import com.eclipse.featdiag.utils.MemberWrapper;
 
 
 /**
@@ -44,10 +41,8 @@ public class DiagramModel extends BaseModel {
     private Map<String, FieldModel> fieldModels;
 	private Map<String, MethodModel> methodModels;
 	private List<ConnectionModel> connectionModels;
-	
-	//note eben
-	transient private IType classType = null;
-	private String iTypeHandleIdentifier; // used for serialization
+
+	private MemberWrapper<IType> classType;
 	
 	/**
 	 * Creates a new diagram object and inserts the class
@@ -342,24 +337,9 @@ public class DiagramModel extends BaseModel {
 	public EditPart createEditPart() {
 		return new DiagramPart();
 	}
-	
-	// note eben...
-	
-	// serialization stuff
-	private void writeObject(ObjectOutputStream out) throws IOException {
-		iTypeHandleIdentifier = classType.getHandleIdentifier();
-		out.defaultWriteObject();
-	}
-
-	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-		// our "pseudo-constructor"
-		in.defaultReadObject();
-		classType = (IType) JavaCore.create(iTypeHandleIdentifier);
-	}
-	// end serialization stuff
-	
+		
 	public boolean update(){
-		if(classType == null || !classType.exists()){
+		if(classType == null || !classType.getMember().exists()){
 			clear();
 			return false;
 		}
@@ -390,18 +370,18 @@ public class DiagramModel extends BaseModel {
 	}
 	
 	public void addMembers(IType classType){
-		this.classType = classType;			
+		this.classType = new MemberWrapper<IType>(classType);			
 		addMembers();
 	}
 	
 	protected void addMembers(){
 		try {
-			for(IField field : classType.getFields()){
+			for(IField field : classType.getMember().getFields()){
 				addFieldModel(new FieldModel(field));
 				findReferences(field);
 			}
 			
-			for(IMethod method : classType.getMethods()){
+			for(IMethod method : classType.getMember().getMethods()){
 				addMethodModel(new MethodModel(method));
 				findReferences(method);
 			}

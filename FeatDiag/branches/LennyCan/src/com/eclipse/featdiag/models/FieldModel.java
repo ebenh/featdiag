@@ -1,19 +1,15 @@
 package com.eclipse.featdiag.models;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.gef.EditPart;
 import org.eclipse.jdt.core.IField;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
 
 import com.eclipse.featdiag.commands.FieldAddCommand;
 import com.eclipse.featdiag.commands.MemberAddCommand;
 import com.eclipse.featdiag.parts.FieldPart;
+import com.eclipse.featdiag.utils.MemberWrapper;
 
 
 /**
@@ -29,10 +25,11 @@ public class FieldModel extends MemberModel {
     /**
      * The string representation of the field's type
      */
-    transient IField field;
-    private String iTypeHandleIdentifier; // used for serialization
-	
-    String toStringName;
+
+    private MemberWrapper<IField> field;
+    private String fieldName;
+    private int flags;
+    
     /**
 	 * Create a new field model with the given name, of
 	 * the given class type, with the given modifiers.
@@ -42,16 +39,23 @@ public class FieldModel extends MemberModel {
 	 */	
     public FieldModel(IField field) {
 		super();
-		this.field = field;
+		this.field = new MemberWrapper<IField>(field);
 		
 		try {
-			String pkg = field.getDeclaringType().getPackageFragment().getElementName();
-			pkg = (pkg.equals("")?pkg:pkg+".");
-			toStringName = Signature.toString(field.getTypeSignature()) + " " + pkg + field.getDeclaringType().getElementName() + "." + field.getElementName();
+			String packageName = field.getDeclaringType().getPackageFragment().getElementName();
+			packageName = (packageName.equals("")?packageName:packageName+".");
+			fieldName = Signature.toString(field.getTypeSignature()) + " " + packageName + field.getDeclaringType().getElementName() + "." + field.getElementName();
 		} catch (JavaModelException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
+		
+		try {
+			flags = field.getFlags();
+		} catch (JavaModelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	/**
@@ -76,57 +80,22 @@ public class FieldModel extends MemberModel {
 	 */
 	
 	public String toString() {
-//		String ret = "";
-//		
-//		try {
-//			ret = Signature.toString(field.getTypeSignature()) + " " + field.getElementName();
-//		} catch (JavaModelException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} 
-//		
-//		return ret;
-		return toStringName;
+		return fieldName;
 	}
 	
 	public String getName() {
-		//return field.getElementName();
 		return toString();
 	}
 	
 	public int getModifiers() {
-		int flags = 0;
-		try {
-			flags = field.getFlags();
-		} catch (JavaModelException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		return flags;
 	}
-	
-	public String getClassName() {
-		return field.getDeclaringType().getElementName();
-	}
-	
-	// serialization stuff
-	private void writeObject(ObjectOutputStream out) throws IOException {
-		iTypeHandleIdentifier = field.getHandleIdentifier();
-		out.defaultWriteObject();
-	}
-
-	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-		// our "pseudo-constructor"
-		in.defaultReadObject();
-		field = (IField) JavaCore.create(iTypeHandleIdentifier);
-	}
-	// end serialization stuff
-	
+		
 	public IField getField(){
-		return field;
+		return field.getMember();
 	}
 	
 	public boolean exists(){
-		return field.exists();
+		return field.getMember().exists();
 	}
 }
