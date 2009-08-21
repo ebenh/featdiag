@@ -407,10 +407,8 @@ public class DiagramModel extends BaseModel {
 					addMethodModel(new MethodModel(foundMethod));
 				
 					if (javaElement.getElementType() == IJavaElement.FIELD) {
-						//addMethodToFieldConnection(foundMethod.getElementName(), javaElement.getElementName());
 						addMethodToFieldConnection(new MethodModel(foundMethod).toString(), new FieldModel((IField)javaElement).toString());
 					} else if (javaElement.getElementType() == IJavaElement.METHOD) {
-						//addMethodToMethodConnection(foundMethod.getElementName(), javaElement.getElementName());
 						addMethodToMethodConnection(new MethodModel(foundMethod).toString(), new MethodModel((IMethod)javaElement).toString());
 					} else {
 						assert false;
