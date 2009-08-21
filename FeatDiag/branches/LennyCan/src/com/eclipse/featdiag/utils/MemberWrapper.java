@@ -22,6 +22,7 @@ public class MemberWrapper<T extends IMember> implements Serializable {
 		out.defaultWriteObject();
 	}
 
+	@SuppressWarnings("unchecked")
 	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
 		in.defaultReadObject();
 		member = (T) JavaCore.create(iTypeHandleIdentifier);
