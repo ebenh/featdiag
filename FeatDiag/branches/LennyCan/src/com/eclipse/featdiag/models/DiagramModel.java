@@ -365,7 +365,6 @@ public class DiagramModel extends BaseModel {
 		}
 		
 		addMembers();
-		//addEdges();
 		return true;
 	}
 	
