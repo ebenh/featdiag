@@ -15,7 +15,7 @@ import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorPart;
 
 import com.eclipse.featdiag.editors.DiagramEditor;
-import com.eclipse.featdiag.editors.FileSaveListener;
+//import com.eclipse.featdiag.editors.FileSaveListener;
 import com.eclipse.featdiag.parts.DiagramPart;
 import com.eclipse.featdiag.parts.FieldPart;
 import com.eclipse.featdiag.parts.MethodPart;

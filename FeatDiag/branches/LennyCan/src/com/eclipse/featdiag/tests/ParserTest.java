@@ -11,8 +11,8 @@ import java.util.Set;
 import org.eclipse.core.runtime.CoreException;
 
 import com.eclipse.featdiag.models.ConnectionModel;
-import com.eclipse.featdiag.models.DiagramModel;
-import com.eclipse.featdiag.parser.Parser;
+//import com.eclipse.featdiag.models.DiagramModel;
+//import com.eclipse.featdiag.parser.Parser;
 
 import junit.framework.TestCase;
 
@@ -32,12 +32,12 @@ public class ParserTest extends TestCase {
 	
     private void setupParser(String className) throws CoreException {// throws Exception {
         
-        Parser parser = new Parser(className);
-        DiagramModel contentModel = new DiagramModel();
-        parser.addMembersToDiagram(contentModel);
-        fields = contentModel.getFields();
-        methods = contentModel.getMethods();
-        connections = contentModel.getConnectionModels();
+//        Parser parser = new Parser(className);
+//        DiagramModel contentModel = new DiagramModel();
+//        parser.addMembersToDiagram(contentModel);
+//        fields = contentModel.getFields();
+//        methods = contentModel.getMethods();
+//        connections = contentModel.getConnectionModels();
     }
     
     /**

@@ -8,14 +8,9 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
-//import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-//import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-//import org.eclipse.core.runtime.Path;
 import org.eclipse.gef.DefaultEditDomain;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.GraphicalViewer;
@@ -28,7 +23,6 @@ import org.eclipse.gef.palette.PaletteRoot;
 import org.eclipse.gef.ui.parts.GraphicalEditorWithFlyoutPalette;
 import org.eclipse.gef.ui.parts.GraphicalViewerKeyHandler;
 import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
@@ -39,18 +33,13 @@ import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.part.EditorPart;
-import org.eclipse.ui.part.FileEditorInput;
 
 import com.eclipse.featdiag.editors.palette.PaletteViewer;
 import com.eclipse.featdiag.factories.BaseFactory;
 import com.eclipse.featdiag.models.DiagramModel;
 import com.eclipse.featdiag.models.PaletteModel;
-//import com.eclipse.featdiag.parser.InvalidClassName;
-//import com.eclipse.featdiag.parser.Parser;
 import com.eclipse.featdiag.parser.meyers.ISOMLayout;
 import com.eclipse.featdiag.parts.DiagramPart;
-import com.eclipse.featdiag.utils.FileUtils;
 import org.eclipse.gef.MouseWheelZoomHandler;
 
 
