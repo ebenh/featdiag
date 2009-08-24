@@ -1,10 +1,12 @@
 package com.eclipse.featdiag.models;
 
+import java.util.AbstractSet;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.CoreException;
@@ -40,7 +42,7 @@ public class DiagramModel extends BaseModel {
     private PaletteModel palette;
     private Map<String, FieldModel> fieldModels;
 	private Map<String, MethodModel> methodModels;
-	private List<ConnectionModel> connectionModels;
+	private AbstractSet<ConnectionModel> connectionModels;
 
 	private MemberWrapper<IType> classType;
 	
@@ -52,7 +54,7 @@ public class DiagramModel extends BaseModel {
 		palette = new PaletteModel();
 		fieldModels = new HashMap <String, FieldModel>();
 		methodModels = new HashMap <String, MethodModel>();
-		connectionModels = new Vector<ConnectionModel>();
+		connectionModels = new TreeSet<ConnectionModel>();
 	}
 		
 	/**
@@ -196,7 +198,7 @@ public class DiagramModel extends BaseModel {
 	 * @return
 	 */
 	public List<ConnectionModel> getConnectionModels() {
-		return connectionModels;
+		return new Vector<ConnectionModel>(connectionModels);
 	}
 	
 	/**

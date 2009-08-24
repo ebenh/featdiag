@@ -133,4 +133,16 @@ public class ConnectionModel extends BaseModel implements Comparable<ConnectionM
 		}
 		return toString().compareTo(connection.toString());
 	}
+	
+	public boolean equals(Object o){
+		if(this == o)
+			return true;
+		
+		if(!(o instanceof ConnectionModel))
+			return false;
+		
+		ConnectionModel model = (ConnectionModel)o;
+		
+		return (this.compareTo(model)==0) ? true : false;
+	}
 }

@@ -1,6 +1,8 @@
 package com.eclipse.featdiag.models;
 
+import java.util.AbstractSet;
 import java.util.List;
+import java.util.TreeSet;
 import java.util.Vector;
 
 import org.eclipse.draw2d.geometry.Point;
@@ -17,8 +19,8 @@ public abstract class MemberModel extends BaseModel implements Comparable<Member
 	
 	private static final long serialVersionUID = 5488986110945292031L;
 	
-	private List<ConnectionModel> uses;
-	private List<ConnectionModel> usedBy;
+	private AbstractSet<ConnectionModel> uses;
+	private AbstractSet<ConnectionModel> usedBy;
 	private Rectangle bounds;
 	private int width;
 	private int height;
@@ -32,8 +34,8 @@ public abstract class MemberModel extends BaseModel implements Comparable<Member
 	 * @param name
 	 */
 	public MemberModel() {
-		this.uses = new Vector<ConnectionModel>();
-		this.usedBy = new Vector<ConnectionModel>();
+		this.uses = new TreeSet<ConnectionModel>();
+		this.usedBy = new TreeSet<ConnectionModel>();
 	}
 		
 	/**
@@ -124,7 +126,7 @@ public abstract class MemberModel extends BaseModel implements Comparable<Member
 	 * @return
 	 */
 	public List<ConnectionModel> getUses() {
-		return uses;
+		return new Vector<ConnectionModel>(uses);
 	}
 	
 	/**
@@ -153,7 +155,7 @@ public abstract class MemberModel extends BaseModel implements Comparable<Member
 	 * @return
 	 */
 	public List<ConnectionModel> getUsedBy() {
-		return usedBy;
+		return new Vector<ConnectionModel>(usedBy);
 	}
 	
 	/**
@@ -161,9 +163,16 @@ public abstract class MemberModel extends BaseModel implements Comparable<Member
 	 * with the same name as this method or field.
 	 * Returns false otherwise. 
 	 */
-	public boolean equals(Object o) {
-		return (o instanceof MemberModel &&
-				toString().equals((o.toString())));
+	public boolean equals(Object o){
+		if(this == o)
+			return true;
+		
+		if(!(o instanceof MemberModel))
+			return false;
+		
+		MemberModel model = (MemberModel)o;
+		
+		return (this.compareTo(model)==0) ? true : false;
 	}
 	
 	/**
